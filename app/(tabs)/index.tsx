@@ -57,7 +57,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   post: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     paddingVertical: 20,
     borderBottomWidth: 2,
     borderBottomColor: "#DCD7C910",

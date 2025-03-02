@@ -26,7 +26,7 @@ export default function RootLayout() {
 
   return (
     <View style={styles.container}>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{ headerShown: false, animation: "fade", gestureEnabled: true }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)" />
       </Stack>

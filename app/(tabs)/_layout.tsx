@@ -19,6 +19,7 @@ export default function TabLayout() {
         tabBarShowLabel: false, // hide the tab labels
       }}
     >
+      {/* Home */}
       <Tabs.Screen
         name="index"
         options={{
@@ -26,6 +27,42 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? "home" : "home-outline"} 
+              size={28} 
+              color={color} 
+            />
+          )
+        }}
+      />
+      {/* Create Post */}
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: "Create",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons 
+              name={"add-outline"} 
+              size={30} 
+              color={focused ? theme.primary : color}
+              style={{
+                backgroundColor: focused ? "white" : theme.primary,
+                borderRadius: 5,
+                width: 40,
+                height: 35,
+                paddingHorizontal: 5.5,
+                paddingVertical: 2.5,
+              }}
+            />
+          )
+        }}
+      />
+      {/* Profile */}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons 
+              name={focused ? "person" : "person-outline"} 
               size={28} 
               color={color} 
             />

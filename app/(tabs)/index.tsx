@@ -13,12 +13,14 @@ export default function HomeScreen() {
 
   const postObject = ({ item }: { item: Post }) => (
     <View style={styles.post}>
-      <View style={styles.info}>
+      <View style={styles.avatarContainer}>
         <Image style={styles.avatar} source={{ uri: item.avatar }} />
-        <Text style={styles.name}>{item.name}</Text>
       </View>
-      <Text style={styles.description}>{item.description}</Text>
-      <Image style={styles.image} source={{ uri: item.image }} />
+      <View style={styles.infoContainer}>
+        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.description}>{item.description}</Text>
+        <Image style={styles.image} source={{ uri: item.image }} />
+      </View>
     </View>
   );
 
@@ -61,10 +63,19 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 2,
     borderBottomColor: "#DCD7C910",
-  },
-  info: {
     flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  avatarContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
+    width: 40,
+  },
+  infoContainer: {
+    flexDirection: "column",
+    flexShrink: 1,
+    paddingLeft: 10,
   },
   avatar: {
     width: 40,
@@ -74,7 +85,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 14,
     fontWeight: "bold",
-    paddingLeft: 8,
     color: theme.textColor,
   },
   image: {
@@ -84,8 +94,10 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    paddingVertical: 10,
     color: theme.textColor,
     lineHeight: 20,
+    paddingTop: 3,
+    paddingBottom: 8,
+    
   },
 });

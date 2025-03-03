@@ -1,9 +1,35 @@
 import React from "react";
 import { useRef } from "react";
 import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, Animated } from "react-native";
+import { useFocusEffect } from "expo-router";
+
 import theme from "@/constants/theme";
+import { Post } from "@/constants/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
+  const [posts, setPosts] = React.useState<Post[]>([]); // store the posts
+
+  // load the posts from the AsyncStorage
+  const loadPosts = async () => {
+    try {
+      const travelPosts = await AsyncStorage.getItem("travelPosts"); // retrieve the uploaded posts, return null if not found, or an array of posts in JSON format
+      
+      const posts: Post[] = travelPosts ? JSON.parse(travelPosts) : []; // parse the JSON string to an array of posts
+
+      setPosts(posts); // update the posts state
+    } catch (error) {
+      console.error("Failed to load the posts:", error);
+    }
+  }
+
+  // load the posts when the component mounts
+  useFocusEffect( // useFocusEffect is a hook from @react-navigation/native that runs when the screen is focused
+    React.useCallback(() => {
+      loadPosts(); // reload posts when screen is focused
+    }, [])
+  );
+
   // allow the header to collapse when scrolling
   // set up the reference to keep track of the scroll position
   const scrollOffsetY = useRef(new Animated.Value(0)).current; // intially, the scroll position is 0
@@ -22,15 +48,6 @@ export default function HomeScreen() {
     extrapolate: "clamp", // prevent the header opacity from going below 0 or above 1
   });
 
-  // create each post object
-  interface Post {
-    pid: number;
-    avatar: string;
-    name: string;
-    image: string[]; // array of image URLs
-    description: string;
-  }
-
   const postObject = ({ item }: { item: Post }) => (
     <View style={styles.post}>
       <View style={styles.avatarContainer}>
@@ -47,45 +64,11 @@ export default function HomeScreen() {
           keyExtractor={(item, index) => `${item}-${index}`} // uri-0, uri-1, ... to avoid duplicate keys
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 10 }}
+          contentContainerStyle={{ gap: 5 }}
         />
       </View>
     </View>
   );
-
-  // create mock data
-  const DATA: Post[] = [
-    {
-      pid: 1,
-      avatar: "https://wallpapers.com/images/hd/caveman-cartoon-cute-cat-pfp-9fpmjcmi9v3vwy1w.jpg",
-      name: "John Doe",
-      image: [
-        "https://i0.wp.com/theluxurytravelexpert.com/wp-content/uploads/2014/01/new-york-city-usa.jpg?ssl=1",
-        "https://media.cntraveller.com/photos/64f4fc5f663208f83a21af16/16:9/w_2580,c_limit/New%20York%20City_GettyImages-1347979016.jpg",
-        "https://i.pinimg.com/736x/89/e0/f3/89e0f3d73a1522e845c4cd2f283038a6.jpg",
-        "https://images.unsplash.com/photo-1697645852743-533e7d3705a6?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bmV3JTIweW9yayUyMGFlc3RoZXRpY3xlbnwwfHwwfHx8MA%3D%3D",
-      ],
-      description: "Wandering through the streets of NYC, where every corner tells a story—sky-high dreams, yellow cabs, and endless energy!",
-    },
-    {
-      pid: 2,
-      avatar: "https://pics.craiyon.com/2023-10-11/3ffff0ccb64f41c9a85fbc0fe79bbc7e.webp",
-      name: "Jane Doe",
-      image: [
-        "https://media.timeout.com/images/106148123/image.jpg",
-      ],
-      description: "Breathtaking mountain views meet vibrant city life—Vancouver is the perfect blend of nature and urban charm!",
-    },
-    {
-      pid: 3,
-      avatar: "https://i.pinimg.com/736x/8b/f3/e2/8bf3e286d71421d3e8f22e13aeddbdca.jpg",
-      name: "Jim Doe",
-      image: [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/20190616154621%21Echo_Park_Lake_with_Downtown_Los_Angeles_Skyline.jpg/1200px-20190616154621%21Echo_Park_Lake_with_Downtown_Los_Angeles_Skyline.jpg",
-      ],
-      description: "Los Angeles is the city with the second biggest population in the United States after New York, overtaking Chicago in the 1970s",
-    },
-  ];
 
   return (
     <SafeAreaView style={{ backgroundColor: theme.background, flex: 1 }}>
@@ -95,9 +78,9 @@ export default function HomeScreen() {
         <Text style={styles.title}>Roaming</Text>
       </Animated.View>
       <Animated.FlatList
-        data={DATA}
+        data={posts}
         renderItem={postObject}
-        keyExtractor={(item) => item.pid.toString()}
+        keyExtractor={(item) => item.pid}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }],
           { useNativeDriver: false }
@@ -159,6 +142,8 @@ const styles = StyleSheet.create({
     width: 200,
     height: 250,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.primary,
   },
   description: {
     fontSize: 15,

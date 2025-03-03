@@ -21,6 +21,9 @@ Roaming is a mobile application designed for travelers to document and share the
 - Displays a main feed with placeholder content  
 - Implemented with FlatList for scalable and efficient content loading  
 
+### Create Screen
+- Allow user to select at most 10 pictures to upload and write post description
+
 ---
 
 ## Future Enhancements  

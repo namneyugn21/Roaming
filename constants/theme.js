@@ -4,7 +4,7 @@ const theme = {
   primary: "#3F4F44",
   secondary: "#1D1616",
   titleFont: "Monomakh",
-  titleColor: "#b5b5b5",
+  tertiary: "#b5b5b5",
 };
 
 export default theme;

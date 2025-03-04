@@ -37,19 +37,19 @@ export default function WelcomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={ styles.subContainer }>
-        <Image 
+      <View style={styles.subContainer}>
+        <Image
           source={require("../assets/images/roaming-logo.png")}
           style={styles.logo}
         />
         <Text style={styles.title}>Roaming</Text>
       </View>
       <View style={styles.button}>
-          <Button
-            title="Get Started"
-            onPress={() => router.replace("/(tabs)")} // navigate to the tabs screen
-            color={theme.titleColor}
-          />
+        <Button
+          title="Get Started"
+          onPress={() => router.replace("/(tabs)")} // navigate to the tabs screen
+          color={theme.tertiary}
+        />
       </View>
     </SafeAreaView>
   );
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontFamily: theme.titleFont,
-    color: theme.titleColor,
+    color: theme.tertiary,
     marginTop: -35,
   },
   logo: {

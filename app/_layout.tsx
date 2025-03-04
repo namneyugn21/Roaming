@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
-
 import theme from "@/constants/theme"; // import the global theme
 
 SplashScreen.preventAutoHideAsync(); // prevent splash screen from hiding too early

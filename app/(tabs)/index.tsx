@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     paddingHorizontal: 15,
     fontWeight: "bold",
-    color: theme.titleColor,
+    color: theme.textColor,
     textAlignVertical: "center",
     fontFamily: theme.titleFont,
   },

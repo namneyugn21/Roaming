@@ -6,7 +6,6 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
-
 import theme from "@/constants/theme";
 import { Post, User } from "@/constants/types";
 import { loadUser, loadPosts, savePosts } from "@/services/storage";
@@ -18,7 +17,7 @@ export default function CreateScreen() {
   const captionInputRef = React.useRef<TextInput>(null); // reference to the caption input field
 
   const [user, setUser] = React.useState<User | null>(null); // store the user
-  
+
   // load the posts when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
@@ -44,7 +43,7 @@ export default function CreateScreen() {
       case "location":
         permission = await Location.requestForegroundPermissionsAsync();
         break;
-      default: 
+      default:
         permission = { status: "denied" };
     }
     return permission.status === "granted";
@@ -74,7 +73,7 @@ export default function CreateScreen() {
     const newPost: Post = {
       pid: Date.now().toString(),
       uid: user.uid,
-      image: image ? image : [], 
+      image: image ? image : [],
       description: caption ? caption.trim() : null,
       city: city ? city : "",
       country: country ? country : "",
@@ -85,7 +84,7 @@ export default function CreateScreen() {
     router.replace("/(tabs)"); // navigate to the Home screen
   };
 
-  {/* open the image picker to select images */}
+  {/* open the image picker to select images */ }
   const handleImagePicker = async () => {
     const hasPermission = await requestPermission("images");
     if (!hasPermission) {
@@ -122,7 +121,7 @@ export default function CreateScreen() {
     }
   };
 
-  {/* remove the image from the image state */}
+  {/* remove the image from the image state */ }
   const handleRemoveImage = (uri: string) => {
     setImage((prevImages) => prevImages ? prevImages.filter((imageURI) => imageURI !== uri) : []);
     if (image && image.length === 1) {
@@ -130,7 +129,7 @@ export default function CreateScreen() {
     }
   }
 
-  {/* handle the location */}
+  {/* handle the location */ }
   const handleLocation = async () => {
     const hasPermission = await requestPermission("location");
     if (!hasPermission) {
@@ -153,7 +152,7 @@ export default function CreateScreen() {
     }
   }
 
-  {/* open the camera */}
+  {/* open the camera */ }
   const handleCamera = async () => {
     const hasPermission = await requestPermission("camera");
     if (!hasPermission) {
@@ -162,7 +161,7 @@ export default function CreateScreen() {
     }
 
     if (image && image.length >= MAX_IMAGE_COUNT) {
-      Alert.alert("Maximum Images", `You can only upload up to ${MAX_IMAGE_COUNT} images!`); 
+      Alert.alert("Maximum Images", `You can only upload up to ${MAX_IMAGE_COUNT} images!`);
       return;
     }
 
@@ -186,7 +185,7 @@ export default function CreateScreen() {
     }, 100);
   }
 
-  {/* clear the states when the screen is unfocused */}
+  {/* clear the states when the screen is unfocused */ }
   useFocusEffect(
     React.useCallback(() => {
       return () => {
@@ -199,14 +198,14 @@ export default function CreateScreen() {
   );
 
   return (
-    <View 
+    <View
       style={styles.container}
     >
       {/* top screen component */}
       <View style={styles.avatarContainer}>
-        <Image 
-          style={styles.avatar} 
-          source={{ uri: user?.avatar }} 
+        <Image
+          style={styles.avatar}
+          source={{ uri: user?.avatar }}
         />
       </View>
       <View style={styles.infoContainer}>
@@ -217,7 +216,7 @@ export default function CreateScreen() {
         <TextInput
           ref={captionInputRef}
           placeholder="What's on your mind?"
-          placeholderTextColor={theme.titleColor}
+          placeholderTextColor={theme.tertiary}
           multiline={true}
           autoFocus={true}
           style={styles.input}
@@ -249,20 +248,20 @@ export default function CreateScreen() {
         )}
         <View style={styles.actions}>
           <TouchableOpacity onPress={handleImagePicker}>
-            <Ionicons name="images-outline" size={22} color={theme.titleColor}></Ionicons>
+            <Ionicons name="images-outline" size={22} color={theme.tertiary}></Ionicons>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleCamera}>
-            <Ionicons name="camera-outline" size={26} color={theme.titleColor}></Ionicons>
-          </TouchableOpacity>          
+            <Ionicons name="camera-outline" size={26} color={theme.tertiary}></Ionicons>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleLocation}>
-            <Ionicons name="location-outline" size={23} color={theme.titleColor}></Ionicons>
-          </TouchableOpacity>        
+            <Ionicons name="location-outline" size={23} color={theme.tertiary}></Ionicons>
+          </TouchableOpacity>
         </View>
       </View>
 
       {/* bottom screen component that is the post button */}
       <KeyboardAvoidingView
-      style={styles.postContainer}
+        style={styles.postContainer}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={110}
       >
@@ -308,7 +307,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 13,
-    color: theme.titleColor,
+    color: theme.tertiary,
     marginTop: 2,
   },
   input: {
@@ -329,7 +328,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.background,
   },
   postButton: {
-    backgroundColor: theme.titleColor,
+    backgroundColor: theme.tertiary,
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 20,

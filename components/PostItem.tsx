@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
-
 import { Post, User } from '@/constants/types';
 import theme from '@/constants/theme';
 
@@ -15,12 +14,13 @@ const PostItem: React.FC<PostItemProps> = ({ item, user }) => {
     <View style={styles.post}>
       <View style={styles.avatarContainer}>
         <Image style={styles.avatar} source={{ uri: user?.avatar }} />
+        <View style={{ width: 2 , height: "100%", backgroundColor: theme.primary, flex: 1 }}></View>
       </View>
       <View style={styles.infoContainer}>
         {/* display the name, location, and description */}
         <View style={{ flexDirection: "row", gap: 5, alignItems: "baseline", justifyContent: "space-between" }}>
           <Text style={styles.name}>{user?.username}</Text>
-          <Text style={{ color: theme.titleColor }}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+          <Text style={{ color: theme.tertiary }}>{new Date(item.createdAt).toLocaleDateString()}</Text>
         </View>
         {(item.city && item.country) && (
           <Text style={styles.location}>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   avatarContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: 40,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 13,
-    color: theme.titleColor,
+    color: theme.tertiary,
     marginTop: 2,
   },
 });

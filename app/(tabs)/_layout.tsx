@@ -1,9 +1,8 @@
 import { Tabs, useRouter } from 'expo-router';
 import { StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { Ionicons }  from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import theme from '@/constants/theme';
-
 import { clearStorage } from '@/services/storage';
 
 export default function TabLayout() {
@@ -16,9 +15,9 @@ export default function TabLayout() {
         tabBarActiveTintColor: "white", // active tab color (white)
         tabBarInactiveTintColor: "gray",  // inactive tab color (gray)
         tabBarShowLabel: false, // hide the tab labels
-        headerStyle: { 
+        headerStyle: {
           backgroundColor: theme.background,
-          shadowColor: theme.titleColor,
+          shadowColor: theme.tertiary,
         },
         headerTintColor: "white",
       }}
@@ -29,10 +28,10 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={focused ? "home" : "home-outline"} 
-              size={28} 
-              color={color} 
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={28}
+              color={color}
             />
           ),
         }}
@@ -43,9 +42,9 @@ export default function TabLayout() {
         options={{
           title: "New post",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={"add-outline"} 
-              size={30} 
+            <Ionicons
+              name={"add-outline"}
+              size={30}
               color={focused ? theme.primary : color}
               style={{
                 backgroundColor: focused ? "white" : theme.primary,
@@ -69,7 +68,7 @@ export default function TabLayout() {
               onPress={() => clearStorage()} // clear the AsyncStorage
               style={styles.backButton}
             >
-              <Text style={{ paddingRight: 15, fontSize: 18, color: "white"}}>Clear</Text>
+              <Text style={{ paddingRight: 15, fontSize: 18, color: "white" }}>Clear</Text>
             </TouchableOpacity>;
           },
         }}
@@ -80,10 +79,10 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={focused ? "person" : "person-outline"} 
-              size={28} 
-              color={color} 
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={28}
+              color={color}
             />
           )
         }}

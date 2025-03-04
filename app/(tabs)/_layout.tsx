@@ -3,7 +3,8 @@ import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Ionicons }  from '@expo/vector-icons';
 import React from 'react';
 import theme from '@/constants/theme';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { clearStorage } from '@/services/storage';
 
 export default function TabLayout() {
   const router = useRouter(); // get the navigation object
@@ -20,28 +21,6 @@ export default function TabLayout() {
           shadowColor: theme.titleColor,
         },
         headerTintColor: "white",
-        headerLeft: () => (
-          router.canGoBack() ? ( // show back button only if there's a previous screen
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <Ionicons name="close-outline" size={35} color="white" />
-            </TouchableOpacity>
-          ) : null
-        ),
-        headerRight: () => {
-          return <TouchableOpacity
-            onPress={async () => {
-              try {
-                await AsyncStorage.clear(); // ✅ Clear storage properly
-                router.replace("/"); // ✅ Navigate to Home screen
-              } catch (error) {
-                console.error("Failed to clear AsyncStorage:", error);
-              }
-            } }
-            style={styles.backButton}
-          >
-            <Text style={{ paddingRight: 20, fontSize: 18, color: "white"}}>Clear</Text>
-          </TouchableOpacity>;
-        },
       }}
     >
       {/* Home */}
@@ -78,13 +57,28 @@ export default function TabLayout() {
               }}
             />
           ),
+          headerLeft: () => (
+            router.canGoBack() ? ( // show back button only if there's a previous screen
+              <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <Ionicons name="close-outline" size={35} color="white" />
+              </TouchableOpacity>
+            ) : null
+          ),
+          headerRight: () => {
+            return <TouchableOpacity
+              onPress={() => clearStorage()} // clear the AsyncStorage
+              style={styles.backButton}
+            >
+              <Text style={{ paddingRight: 15, fontSize: 18, color: "white"}}>Clear</Text>
+            </TouchableOpacity>;
+          },
         }}
       />
       {/* Profile */}
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? "person" : "person-outline"} 
@@ -107,6 +101,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   backButton: {
-    marginLeft: 15,
+    marginLeft: 10,
   },
 });

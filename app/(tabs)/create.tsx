@@ -8,13 +8,28 @@ import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 
 import theme from "@/constants/theme";
-import { Post } from "@/constants/types";
+import { Post, User } from "@/constants/types";
+import { loadUser, loadPosts, savePosts } from "@/services/storage";
 
 const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
 
 export default function CreateScreen() {
   const router = useRouter();
   const captionInputRef = React.useRef<TextInput>(null); // reference to the caption input field
+
+  const [user, setUser] = React.useState<User | null>(null); // store the user
+  
+  // load the posts when the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        const userData = await loadUser(); // retrieve the user
+        const postsData = await loadPosts(); // retrieve the posts
+        setUser(userData);
+      };
+      fetchData();
+    }, [])
+  );
 
   // Handle the permission
   const requestPermission = async (type: "images" | "camera" | "location") => {
@@ -45,33 +60,29 @@ export default function CreateScreen() {
   const [city, setCity] = React.useState<string | null>(null); // store the city name
   const [country, setCountry] = React.useState<string | null>(null); // store the country name
 
-  {/* handle the post creation */}
   const handlePost = async () => {
+    // retrieve user information from AsyncStorage or other source
+    const userJson = await AsyncStorage.getItem("user");
+    const user: User = userJson ? JSON.parse(userJson) : null;
+
+    if (!user) {
+      Alert.alert("Error", "User not found. Please log in again.");
+      return;
+    }
+
     // create new post object
     const newPost: Post = {
       pid: Date.now().toString(),
-      avatar: "https://wallpapers.com/images/hd/caveman-cartoon-cute-cat-pfp-9fpmjcmi9v3vwy1w.jpg",
-      name: "John Doe",
+      uid: user.uid,
       image: image ? image : [], 
       description: caption ? caption.trim() : null,
       city: city ? city : "",
       country: country ? country : "",
+      createdAt: new Date(),
     }
 
-    // save the new post to the AsyncStorage
-    try {
-      const uploadedPosts = await AsyncStorage.getItem("travelPosts"); // retrieve the uploaded posts, return null if not found, or an array of posts in JSON format
-      const posts: Post[] = uploadedPosts ? JSON.parse(uploadedPosts) : []; // parse the JSON string to an array of posts
-
-      posts.unshift(newPost); // add the new post to the posts array at the beginning
-
-      await AsyncStorage.setItem("travelPosts", JSON.stringify(posts)); // save the updated posts array to the AsyncStorage
-
-      // navigate back to the home screen
-      router.navigate("/(tabs)");
-    } catch (error) {
-      Alert.alert("Error", "Failed to create a new post. Please try again later!");
-    }
+    await savePosts(newPost); // save the post to the AsyncStorage
+    router.replace("/(tabs)"); // navigate to the Home screen
   };
 
   {/* open the image picker to select images */}
@@ -195,11 +206,11 @@ export default function CreateScreen() {
       <View style={styles.avatarContainer}>
         <Image 
           style={styles.avatar} 
-          source={{ uri: "https://wallpapers.com/images/hd/caveman-cartoon-cute-cat-pfp-9fpmjcmi9v3vwy1w.jpg" }} 
+          source={{ uri: user?.avatar }} 
         />
       </View>
       <View style={styles.infoContainer}>
-        <Text style={styles.name}>John Doe</Text>
+        <Text style={styles.name}>{user?.username}</Text>
         {(city && country) && (
           <Text style={styles.location}>{city}, {country}</Text>
         )}
@@ -270,7 +281,7 @@ export default function CreateScreen() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    padding: 20,
+    padding: 15,
     backgroundColor: theme.background,
     flex: 1,
   },

@@ -1,8 +1,9 @@
 import { Tabs, useRouter } from 'expo-router';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Ionicons }  from '@expo/vector-icons';
 import React from 'react';
 import theme from '@/constants/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TabLayout() {
   const router = useRouter(); // get the navigation object
@@ -26,6 +27,21 @@ export default function TabLayout() {
             </TouchableOpacity>
           ) : null
         ),
+        headerRight: () => {
+          return <TouchableOpacity
+            onPress={async () => {
+              try {
+                await AsyncStorage.clear(); // ✅ Clear storage properly
+                router.replace("/"); // ✅ Navigate to Home screen
+              } catch (error) {
+                console.error("Failed to clear AsyncStorage:", error);
+              }
+            } }
+            style={styles.backButton}
+          >
+            <Text style={{ paddingRight: 20, fontSize: 18, color: "white"}}>Clear</Text>
+          </TouchableOpacity>;
+        },
       }}
     >
       {/* Home */}

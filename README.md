@@ -25,17 +25,17 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 - Displays a main feed with placeholder content  
 - Implemented with FlatList for scalable and efficient content loading  
 
-### Create Screen
+### Create a post
 - Allow user to select at most 10 pictures to upload and write post description
+- Allow adding user's current location
+- Allow using the user's camera to capture image
 
 ---
 
 ## Future Enhancements  
 
-- Uploading - Allow users to upload photos and descriptions to their journal
 - User Authentication – Allow users to sign in and store their travel logs securely  
 - Location Mapping – Pin visited places on an interactive map  
-- Photo Gallery – Upload multiple images per trip entry  
 - Multi-language Support – Expand accessibility for a global audience  
 
 ---
@@ -46,7 +46,7 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 <div> <img src="assets/images/screenshots/welcome-screen.png" alt="Welcome Screen" width="45%"/> <img src="assets/images/screenshots/home-screen.png" alt="Home Screen" width="45%"/> </div>
 
 ### Upload Post 
-<div> <img src="assets/images/screenshots/post-demo.gif" alt="Post Demo" width="45%"/> </div>
+<div> <img src="assets/images/screenshots/create-post-demo.gif" alt="Post Demo" width="45%"/> </div>
 
 
 ---

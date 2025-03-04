@@ -1,30 +1,61 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList } from "react-native";
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 
 import theme from "@/constants/theme";
 import { Post } from "@/constants/types";
 
+const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
+
 export default function CreateScreen() {
   const router = useRouter();
-  const [caption, setCaption] = React.useState("");
+  const captionInputRef = React.useRef<TextInput>(null); // reference to the caption input field
+
+  // Handle the permission
+  const requestPermission = async (type: "images" | "camera" | "location") => {
+    let permission;
+    switch (type) {
+      case "images":
+        permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        break;
+      case "camera":
+        permission = await ImagePicker.requestCameraPermissionsAsync();
+        break;
+      case "location":
+        permission = await Location.requestForegroundPermissionsAsync();
+        break;
+      default: 
+        permission = { status: "denied" };
+    }
+    return permission.status === "granted";
+  }
+
+  // Caption
+  const [caption, setCaption] = React.useState<string | null>(null);
+
+  // Image state
   const [image, setImage] = React.useState<string[] | null>(null); // store the image uri
+
+  // Location state
+  const [city, setCity] = React.useState<string | null>(null); // store the city name
+  const [country, setCountry] = React.useState<string | null>(null); // store the country name
 
   {/* handle the post creation */}
   const handlePost = async () => {
-    if (caption.trim().length === 0) return;
-
     // create new post object
     const newPost: Post = {
       pid: Date.now().toString(),
       avatar: "https://wallpapers.com/images/hd/caveman-cartoon-cute-cat-pfp-9fpmjcmi9v3vwy1w.jpg",
       name: "John Doe",
       image: image ? image : [], 
-      description: caption.trim(),
+      description: caption ? caption.trim() : null,
+      city: city ? city : "",
+      country: country ? country : "",
     }
 
     // save the new post to the AsyncStorage
@@ -36,17 +67,26 @@ export default function CreateScreen() {
 
       await AsyncStorage.setItem("travelPosts", JSON.stringify(posts)); // save the updated posts array to the AsyncStorage
 
-      // clear the input field
-      setCaption("");
       // navigate back to the home screen
       router.navigate("/(tabs)");
     } catch (error) {
-      console.error("Failed to upload the post:", error);
+      Alert.alert("Error", "Failed to create a new post. Please try again later!");
     }
   };
 
   {/* open the image picker to select images */}
   const handleImagePicker = async () => {
+    const hasPermission = await requestPermission("images");
+    if (!hasPermission) {
+      Alert.alert("Permission Required", "Allow the app to access the images to select photos!");
+      return;
+    }
+
+    if (image && image.length >= MAX_IMAGE_COUNT) {
+      Alert.alert("Maximum Images", `You can only upload up to ${MAX_IMAGE_COUNT} images!`);
+      return;
+    }
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
       aspect: [4, 5],
@@ -57,7 +97,17 @@ export default function CreateScreen() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets.map((asset) => asset.uri));
+      if (image && image.length > 0) {
+        if (image.length + result.assets.length > MAX_IMAGE_COUNT) {
+          // only fill the remaining slots
+          const remainingSlots = MAX_IMAGE_COUNT - image.length;
+          image.unshift(...result.assets.slice(0, remainingSlots).map((asset) => asset.uri));
+        } else {
+          image.unshift(...result.assets.map((asset) => asset.uri));
+        }
+      } else {
+        setImage(result.assets.map((asset) => asset.uri));
+      }
     }
   };
 
@@ -69,12 +119,70 @@ export default function CreateScreen() {
     }
   }
 
-  {/* clear the caption and image state when the screen is unfocused */}
+  {/* handle the location */}
+  const handleLocation = async () => {
+    const hasPermission = await requestPermission("location");
+    if (!hasPermission) {
+      Alert.alert("Permission Required", "Allow the app to access the location to get your current location!");
+      return
+    }
+
+    // get the location object
+    let location = await Location.getCurrentPositionAsync({});
+    if (location) {
+      const { coords } = location;
+      const { latitude, longitude } = coords;
+
+      // get the city and country names from the latitude and longitude
+      let address = await Location.reverseGeocodeAsync({ latitude, longitude });
+      if (address.length > 0) {
+        setCity(address[0].city);
+        setCountry(address[0].country);
+      }
+    }
+  }
+
+  {/* open the camera */}
+  const handleCamera = async () => {
+    const hasPermission = await requestPermission("camera");
+    if (!hasPermission) {
+      Alert.alert("Permission Required", "Allow the app to access the camera to take cute photos!");
+      return;
+    }
+
+    if (image && image.length >= MAX_IMAGE_COUNT) {
+      Alert.alert("Maximum Images", `You can only upload up to ${MAX_IMAGE_COUNT} images!`); 
+      return;
+    }
+
+    // open the camera
+    let photo = await ImagePicker.launchCameraAsync({
+      mediaTypes: "images",
+      aspect: [4, 5],
+      quality: 1,
+    });
+
+    if (!photo.canceled) {
+      if (image && image.length > 0) {
+        image.unshift(photo.assets[0].uri);
+      } else {
+        setImage((prev) => [...(prev || []), photo.assets[0].uri]);
+      }
+    }
+    // focus the caption input field
+    setTimeout(() => {
+      captionInputRef.current?.focus();
+    }, 100);
+  }
+
+  {/* clear the states when the screen is unfocused */}
   useFocusEffect(
     React.useCallback(() => {
       return () => {
         setCaption("");
         setImage(null);
+        setCity(null);
+        setCountry(null);
       };
     }, [])
   );
@@ -92,13 +200,17 @@ export default function CreateScreen() {
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.name}>John Doe</Text>
+        {(city && country) && (
+          <Text style={styles.location}>{city}, {country}</Text>
+        )}
         <TextInput
+          ref={captionInputRef}
           placeholder="What's on your mind?"
           placeholderTextColor={theme.titleColor}
           multiline={true}
           autoFocus={true}
           style={styles.input}
-          value={caption} // bind the caption state to the input value
+          value={caption || ""} // bind the caption state to the input value
           onChangeText={setCaption} // update the caption state when the input changes
         />
         {image && (
@@ -128,10 +240,10 @@ export default function CreateScreen() {
           <TouchableOpacity onPress={handleImagePicker}>
             <Ionicons name="images-outline" size={22} color={theme.titleColor}></Ionicons>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleCamera}>
             <Ionicons name="camera-outline" size={26} color={theme.titleColor}></Ionicons>
           </TouchableOpacity>          
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleLocation}>
             <Ionicons name="location-outline" size={23} color={theme.titleColor}></Ionicons>
           </TouchableOpacity>        
         </View>
@@ -144,9 +256,9 @@ export default function CreateScreen() {
         keyboardVerticalOffset={110}
       >
         <TouchableOpacity
-          style={[styles.postButton, caption.length > 0 || image != null ? styles.postButtonActive : {}]}
+          style={[styles.postButton, ((caption?.length ?? 0) > 0 || image != null) ? styles.postButtonActive : {}]}
           onPress={handlePost}
-          disabled={caption.length === 0}
+          disabled={(caption?.length ?? 0) === 0 && image == null}
         >
           <Text style={styles.postButtonText}>Post</Text>
         </TouchableOpacity>
@@ -182,6 +294,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     color: theme.textColor,
+  },
+  location: {
+    fontSize: 13,
+    color: theme.titleColor,
+    marginTop: 2,
   },
   input: {
     fontSize: 15,

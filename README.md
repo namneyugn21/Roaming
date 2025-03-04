@@ -29,6 +29,7 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 - Allow user to select at most 10 pictures to upload and write post description
 - Allow adding user's current location
 - Allow using the user's camera to capture image
+- *Note: the system will prompt user for permission to access their location, camera, and photo library. This is done by Expo API.*
 
 ---
 

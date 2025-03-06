@@ -5,8 +5,9 @@ import { useFocusEffect } from "expo-router";
 
 import theme from "@/constants/theme";
 import { Post, User } from "@/constants/types";
-import { loadUser, loadPosts } from "@/services/storage";
+import { loadUser } from "@/services/user";
 import PostItem from "@/components/PostItem";
+import { fetchAllPosts } from "@/services/post";
 
 export default function HomeScreen() {
   const [posts, setPosts] = React.useState<Post[]>([]); // store the posts
@@ -17,9 +18,12 @@ export default function HomeScreen() {
     React.useCallback(() => {
       const fetchData = async () => {
         const userData = await loadUser(); // retrieve the user
-        const postsData = await loadPosts(); // retrieve the posts
-        setUser(userData);
-        setPosts(postsData);
+        const postsData = await fetchAllPosts(); // retrieve the posts
+
+        if (userData) {
+          setUser(userData); // set the user
+          setPosts(postsData); // set the posts
+        }
       };
       fetchData();
     }, [])
@@ -50,17 +54,19 @@ export default function HomeScreen() {
       <Animated.View style={[styles.header, { height: headerHeight, opacity: headerOpacity }]}>
         <Text style={styles.title}>Roaming</Text>
       </Animated.View>
-      <Animated.FlatList
-        data={posts} // the data={posts} prop passes the posts array as input to renderPost, and each item from the posts array is passed as a parameter to renderPost through item in renderItem.
-        renderItem={({ item }) => <PostItem key={item.pid} item={item} user={user} /> } // render the post item
-        keyExtractor={(item) => item.pid}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }],
-          { useNativeDriver: false }
-        )}
-        contentContainerStyle={{ paddingTop: 40 }}
-        showsVerticalScrollIndicator={false}
-      />
+      {(user && posts) && (
+        <Animated.FlatList
+          data={posts} // the data={posts} prop passes the posts array as input to renderPost, and each item from the posts array is passed as a parameter to renderPost through item in renderItem.
+          renderItem={({ item }) => <PostItem avatar={item.avatar} username={item.username} post={item} key={item.pid} />} // render the post item
+          keyExtractor={(item) => item.pid}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }],
+            { useNativeDriver: false }
+          )}
+          contentContainerStyle={{ paddingTop: 50 }}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </SafeAreaView>
   );
 }

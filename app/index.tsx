@@ -1,56 +1,94 @@
-import { View, Image, Text, StyleSheet, SafeAreaView, Button } from "react-native";
+import React, { useState } from "react";
+import { View, Image, Text, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import theme from "@/constants/theme";
-import { User } from "@/constants/types";
+import { User } from "firebase/auth";
+import AuthModal from "@/components/AuthModal";
+import { auth } from "@/config/firebaseConfig";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "@/config/firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React from "react";
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
-  const DEFAULT_USER: User = {
-    uid: "0",
-    avatar: "https://framerusercontent.com/images/dvrschHGP374SPK1HpDjWPcdFEk.png",
-    username: "namnguyen02",
-    firstName: "Nam",
-    lastName: "Nguyen",
-    bio: "I'm a software developer! I love to code and build cool apps. Also, I'm a huge fan of React Native, I guess :P",
-  }
-
-  const saveUserIfNotExists = async () => {
-    try {
-      const user = await AsyncStorage.getItem("user"); // retrieve the user, return null if not found, or a user object in JSON format
-      if (!user) {
-        await AsyncStorage.setItem("user", JSON.stringify(DEFAULT_USER)); // save the default user object to the AsyncStorage
-      } else {
-        console.log("User already exists:", user);
-      }
-    } catch (error) {
-      console.error("Failed to save the user:", error);
-    }
-  };
-
-  // when the app first, open we will load the mock user and save it to the AsyncStorage
+  // check if user is already signed in
   React.useEffect(() => {
-    saveUserIfNotExists();
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setUser(user);
+
+        try {
+          // check if the userData already exists in async storage
+          const userData = await AsyncStorage.getItem("userData");
+          if (userData) {
+            setIsLoading(false);
+            router.push("/(tabs)/home");
+            return;
+          } 
+
+          // if the userData does not exist, get the user document from firestore
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            await AsyncStorage.setItem("userData", JSON.stringify(userData));
+            setIsLoading(false);
+            router.push("/(tabs)/home");
+          } else {
+            alert("User not found in system database :(");
+            setIsLoading(false);
+          }
+        } catch (error) {
+          alert("Oopp! An error occurred :(");
+          setIsLoading(false);
+        }
+      } else {
+        setUser(null);
+        setIsLoading(false);
+      }
+      clearTimeout(timeout);
+    });
+
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* logo and title */}
       <View style={styles.subContainer}>
-        <Image
-          source={require("../assets/images/roaming-logo.png")}
-          style={styles.logo}
-        />
+        <Image source={require("../assets/images/roaming-logo.png")} style={styles.logo} />
         <Text style={styles.title}>Roaming</Text>
       </View>
-      <View style={styles.button}>
-        <Button
-          title="Get Started"
-          onPress={() => router.replace("/(tabs)")} // navigate to the tabs screen
-          color={theme.tertiary}
+
+    {isLoading ? 
+      <ActivityIndicator style={{ position: 'absolute', bottom: 100 }} size="large" color={theme.tertiary} /> 
+      : 
+      <>
+        {/* sign in button */}
+        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+          <Text style={styles.buttonText}>Sign In with Email</Text>
+        </TouchableOpacity>
+
+        {/* auth Modal */}
+        <AuthModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          isSignUp={isSignUp}
+          switchMode={() => setIsSignUp(!isSignUp)}
         />
-      </View>
+      </>
+    }
     </SafeAreaView>
   );
 }
@@ -64,11 +102,11 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   subContainer: {
-    position: "absolute", // position absolutely to break normal layout flow
-    top: "50%", // move it down by 50% of the screen height
-    transform: [{ translateY: -60 }], // adjust centering
-    alignItems: "center", // center content horizontally
-    width: "100%", // take up the full width
+    position: "absolute",
+    top: "50%",
+    transform: [{ translateY: -60 }],
+    alignItems: "center",
+    width: "100%",
   },
   title: {
     fontSize: 32,
@@ -77,16 +115,21 @@ const styles = StyleSheet.create({
     marginTop: -35,
   },
   logo: {
-    paddingRight: 5,
     width: 150,
     height: 120,
   },
   button: {
     position: "absolute",
-    bottom: 50,
-    backgroundColor: theme.secondary,
+    bottom: 75,
+    backgroundColor: theme.tertiary,
     borderRadius: 50,
     width: 200,
-    paddingVertical: 5,
-  }
+    paddingVertical: 15,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: theme.background,
+    fontSize: 15,
+    fontWeight: "bold",
+  },
 });

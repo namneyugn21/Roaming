@@ -8,7 +8,10 @@ import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 import theme from "@/constants/theme";
 import { Post, User } from "@/constants/types";
-import { loadUser, loadPosts, savePosts } from "@/services/storage";
+import { loadUser } from "@/services/user";
+import { createPost, fetchUserPosts } from "@/services/post";
+import { serverTimestamp } from "firebase/firestore";
+import { auth } from "@/config/firebaseConfig";
 
 const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
 
@@ -23,7 +26,6 @@ export default function CreateScreen() {
     React.useCallback(() => {
       const fetchData = async () => {
         const userData = await loadUser(); // retrieve the user
-        const postsData = await loadPosts(); // retrieve the posts
         setUser(userData);
       };
       fetchData();
@@ -60,28 +62,30 @@ export default function CreateScreen() {
   const [country, setCountry] = React.useState<string | null>(null); // store the country name
 
   const handlePost = async () => {
-    // retrieve user information from AsyncStorage or other source
-    const userJson = await AsyncStorage.getItem("user");
-    const user: User = userJson ? JSON.parse(userJson) : null;
-
+    // retrieve user information 
+    const user = await loadUser();
     if (!user) {
-      Alert.alert("Error", "User not found. Please log in again.");
+      Alert.alert("User not found", "Please login to post!");
       return;
     }
 
     // create new post object
-    const newPost: Post = {
-      pid: Date.now().toString(),
-      uid: user.uid,
-      image: image ? image : [],
-      description: caption ? caption.trim() : null,
-      city: city ? city : "",
-      country: country ? country : "",
-      createdAt: new Date(),
+    try {
+      const postRef = await createPost({ // pass the post "raw" gathered data to the createPost function in services/post.tsx
+        uid: user.uid,
+        image: image || [],
+        description: caption || "",
+        city: city || "",
+        country: country || "",
+        createdAt: serverTimestamp(),
+        username: user.username,
+        avatar: user.avatar,
+      });
+      router.replace("/(tabs)/home"); // navigate to the Home screen
+    } catch (error) {
+      console.error("Failed to create post:", error);
+      Alert.alert("Failed to create post", "Please try again later!");
     }
-
-    await savePosts(newPost); // save the post to the AsyncStorage
-    router.replace("/(tabs)"); // navigate to the Home screen
   };
 
   {/* open the image picker to select images */ }
@@ -352,6 +356,6 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: theme.primary,
+    borderColor: theme.secondary,
   }
 });

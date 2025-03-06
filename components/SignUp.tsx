@@ -1,0 +1,258 @@
+import React, { useRef, useState } from "react";
+import { 
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Animated
+} from "react-native";
+import { useRouter } from "expo-router";
+import theme from "@/constants/theme";
+import { Dimensions } from "react-native";
+import { setDoc, doc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "@/config/firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+interface SignUpProps {
+  isSignUp: boolean;
+  switchMode: () => void;
+}
+
+const width = Dimensions.get("window").width; // get the screen width
+const totalSteps = 3; // total steps for sign up
+
+export default function SignUp({ switchMode }: SignUpProps) {
+  const router = useRouter();
+  const translateX = useRef(new Animated.Value(0)).current;
+  const [steps, setSteps] = useState(0);
+
+  // add user info for data entry
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [bio, setBio] = useState("");
+
+  // button navigations
+  const moveRight = () => {
+    if (steps < totalSteps) {
+      setSteps(steps + 1);
+      Animated.timing(translateX, {
+        toValue: -width * (steps + 1),
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  const moveLeft = () => {
+    if (steps > 0) {
+      setSteps(steps - 1);
+      Animated.timing(translateX, {
+        toValue: -width * (steps - 1),
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  // handle sign up
+  const handleSignUp = async () => {
+    if (!email || !password || !name || !username) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    try {
+      // create user in firebase authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (user) {
+        // create user in firestore
+        try {
+          await setDoc(doc(db, "users", user.uid), {
+            name: name,
+            username: username,
+            email: email,
+            bio: bio,
+            avatar: "https://miro.medium.com/v2/resize:fit:720/1*W35QUSvGpcLuxPo3SRTH4w.png",
+          });
+        } catch (error) {
+          alert("An error occurred. Please try again :(");
+          return;
+        }
+        
+        // push the user data to async storage
+        try {
+          await AsyncStorage.setItem("userData", JSON.stringify({
+            name: name,
+            username: username,
+            email: email,
+            bio: bio,
+            avatar: "https://miro.medium.com/v2/resize:fit:720/1*W35QUSvGpcLuxPo3SRTH4w.png",
+          }));
+        } catch (error) {
+          alert("An error occurred. Please try again :(");
+          return;
+        }
+
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error signing up: ", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+  return (
+    <View style={styles.overlay}>
+      {/* title */}
+      <Text style={styles.formHeader}>Let's get started</Text>
+
+      <Animated.View style={[styles.formContainer, { transform: [{ translateX }] }]}>
+        <View style={styles.stepsContainer}>
+          <TextInput
+            placeholder="Name"
+            placeholderTextColor={theme.tertiary}
+            style={styles.input}
+            autoFocus={true}
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            placeholder="Username"
+            placeholderTextColor={theme.tertiary}
+            style={styles.input}
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
+
+        <View style={styles.stepsContainer}>
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor={theme.tertiary}
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            autoFocus={true}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={theme.tertiary}
+            secureTextEntry
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        <View style={styles.stepsContainer}>
+          <TextInput
+            placeholder="Add some quirkiness to your bio!"
+            placeholderTextColor={theme.tertiary}
+            style={styles.bioInput}
+            multiline={true}
+            value={bio}
+            onChangeText={setBio}
+            autoFocus={true}
+          />
+        </View>
+      </Animated.View>
+
+      {/* switch between sign up and sign in */}
+      <TouchableOpacity onPress={switchMode}>
+        <Text style={styles.switchText}>
+          Already have an account? Sign In
+        </Text>
+      </TouchableOpacity>
+
+      
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <TouchableOpacity style={styles.navButton} onPress={moveLeft} disabled={steps === 0}>
+          <Text style={styles.buttonText} >Back</Text>
+        </TouchableOpacity>
+        {(steps + 1) < totalSteps ? (
+          <TouchableOpacity style={styles.navButton} onPress={moveRight}>
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.navButton} onPress={() => handleSignUp()}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+  },
+  formContainer: {
+    flexDirection: "row",
+    width: width * totalSteps,
+  },
+  stepsContainer: {
+    width: width,
+    height: "100%",
+  },
+  formHeader: {
+    fontSize: 35,
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 25,
+    color: theme.textColor,
+  },
+  input: {
+    width: width - 40, // subtract the padding (of the parent container) from the width
+    borderWidth: 1,
+    borderColor: theme.tertiary,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    marginBottom: 15,
+    fontSize: 15,
+    color: theme.textColor,
+  },
+  bioInput: {
+    width: width - 40, // subtract the padding (of the parent container) from the width
+    borderWidth: 1,
+    borderColor: theme.tertiary,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    marginBottom: 15,
+    fontSize: 15,
+    height: 115,
+    textAlignVertical: "top",
+    color: theme.textColor,
+  },
+  button: {
+    backgroundColor: theme.tertiary,
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    marginTop: 20,
+  },
+  navButton: {
+    backgroundColor: theme.tertiary,
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    marginTop: 20,
+    width: "48%",
+  },
+  buttonText: {
+    color: theme.background,
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  switchText: {
+    color: theme.textColor,
+    fontSize: 14,
+    textAlign: "right",
+    marginTop: -5,
+  },
+});

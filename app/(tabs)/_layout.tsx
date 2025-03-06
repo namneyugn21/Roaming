@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import theme from '@/constants/theme';
-import { clearStorage } from '@/services/storage';
 
 export default function TabLayout() {
   const router = useRouter(); // get the navigation object
@@ -24,7 +23,7 @@ export default function TabLayout() {
     >
       {/* Home */}
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
@@ -47,7 +46,7 @@ export default function TabLayout() {
               size={30}
               color={focused ? theme.primary : color}
               style={{
-                backgroundColor: focused ? "white" : theme.primary,
+                backgroundColor: focused ? "white" : theme.secondary,
                 borderRadius: 10,
                 width: 40,
                 height: 35,
@@ -63,14 +62,6 @@ export default function TabLayout() {
               </TouchableOpacity>
             ) : null
           ),
-          headerRight: () => {
-            return <TouchableOpacity
-              onPress={() => clearStorage()} // clear the AsyncStorage
-              style={styles.backButton}
-            >
-              <Text style={{ paddingRight: 15, fontSize: 18, color: "white" }}>Clear</Text>
-            </TouchableOpacity>;
-          },
         }}
       />
       {/* Profile */}

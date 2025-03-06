@@ -1,13 +1,16 @@
 import React from "react";
 import { TouchableOpacity, Text, Image, View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import theme from "@/constants/theme";
-import { useFocusEffect } from "expo-router";
-import { loadUser, loadPosts } from "@/services/storage";
-import { User, Post } from "@/constants/types";
+import { useFocusEffect, useRouter } from "expo-router";
+import { loadUser } from "@/services/user";
+import { Post, User } from "@/constants/types";
 import PostItem from "@/components/PostItem";
+import { auth } from "@/config/firebaseConfig";
+import { fetchUserPosts } from "@/services/post";
 
 export default function ProfileScreen() {
-  const [user, setUser] = React.useState<User | null>(null);
+  const router = useRouter();
+  const [user, setUser] = React.useState<User>();
   const [posts, setPosts] = React.useState<Post[]>([]);
 
   // load the user and posts when the screen is loaded
@@ -15,22 +18,35 @@ export default function ProfileScreen() {
     React.useCallback(() => {
       const fetchData = async () => {
         const userData = await loadUser();
-        const postsData = await loadPosts();
-        
+        const postsData = await fetchUserPosts();
+
         if (userData) {
           setUser(userData);
           // filter the posts by the user's id
-          setPosts(postsData.filter((post) => post.uid === userData.uid));
+          setPosts(postsData);
         }
       };
       fetchData();
     }, [])
   );
 
+  // handle sign out
+  const handleSignOut = async () => {
+    try {
+      // sign out from firebase and clear the AsyncStorage
+      await auth.signOut();
+
+      // redirect to the welcome screen
+      router.replace("/");
+    } catch (error) {
+      alert("Failed to sign out. Please try again :(");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <Text style={styles.name}>{user?.firstName} {user?.lastName}</Text>
+        <Text style={styles.name}>{user?.name}</Text>
         <View style={styles.subContainer}>
           <Image
             style={styles.avatar}
@@ -39,17 +55,30 @@ export default function ProfileScreen() {
           <View style={styles.infoContainer}>
             <Text style={styles.username}>{user?.username}</Text>
             <Text style={styles.bio}>{user?.bio}</Text>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => {}}
-            >
-              <Text style={styles.editButtonText}>Edit profile</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => { }}
+              >
+                <Text style={styles.actionButtonText}>Edit profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => handleSignOut()}
+              >
+                <Text style={styles.actionButtonText}>Sign out</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-        {/* display the user's posts */}
-        {posts.map((post) => (
-          <PostItem key={post.pid} item={post} user={user} />
+        {/* display the user's poss */}
+        {user && posts?.map((post) => (
+          <PostItem
+            avatar={post.avatar}
+            username={post.username}
+            post={post}
+            key={post.pid}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -66,7 +95,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: theme.primary,
+    borderBottomColor: theme.secondary,
   },
   avatar: {
     width: 70,
@@ -96,16 +125,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
     lineHeight: 20,
   },
-  editButton: {
+  actionButton: {
     backgroundColor: "transparent",
     borderRadius: 5,
     marginTop: 15,
     paddingVertical: 8,
-    width: 150,
+    width: "48%",
     borderWidth: 1,
-    borderColor: theme.primary,
+    borderColor: theme.secondary,
   },
-  editButtonText: {
+  actionButtonText: {
     color: theme.textColor,
     textAlign: "center",
     fontSize: 15,

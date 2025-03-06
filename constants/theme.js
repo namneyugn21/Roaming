@@ -1,10 +1,10 @@
 const theme = {
-  background: "#2C3930",
-  textColor: "white",
-  primary: "#3F4F44",
-  secondary: "#1D1616",
+  background: "#14222d",
+  textColor: "#f7ffff",
+  primary: "#f7ffff",
+  secondary: "#46525e",
+  tertiary: "#b5b5b5", // logo
   titleFont: "Monomakh",
-  tertiary: "#b5b5b5",
 };
 
 export default theme;

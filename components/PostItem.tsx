@@ -2,37 +2,54 @@ import React from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import { Post, User } from '@/constants/types';
 import theme from '@/constants/theme';
+import { Timestamp } from 'firebase/firestore';
 
 // this is to ensure that the PostItem component receives the correct props
 interface PostItemProps {
-  item: Post;
-  user: User | null;
+  avatar: string;
+  username: string;
+  post: Post;
 }
 
-const PostItem: React.FC<PostItemProps> = ({ item, user }) => {
+const PostItem: React.FC<PostItemProps> = ({ avatar, username , post }) => {
+  const formattedDate =
+    post.createdAt instanceof Timestamp
+      ? post.createdAt.toDate().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : post.createdAt instanceof Date
+      ? post.createdAt.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "";
+
   return (
     <View style={styles.post}>
       <View style={styles.avatarContainer}>
-        <Image style={styles.avatar} source={{ uri: user?.avatar }} />
-        <View style={{ width: 2 , height: "100%", backgroundColor: theme.primary, flex: 1 }}></View>
+        <Image style={styles.avatar} source={{ uri: avatar }} />
+        <View style={{ width: 2 , height: "100%", backgroundColor: theme.secondary, flex: 1 }}></View>
       </View>
       <View style={styles.infoContainer}>
         {/* display the name, location, and description */}
         <View style={{ flexDirection: "row", gap: 5, alignItems: "baseline", justifyContent: "space-between" }}>
-          <Text style={styles.name}>{user?.username}</Text>
-          <Text style={{ color: theme.tertiary }}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+          <Text style={styles.name}>{username}</Text>
+          <Text style={{ color: theme.tertiary }}>{formattedDate}</Text>
         </View>
-        {(item.city && item.country) && (
+        {(post.city && post.country) && (
           <Text style={styles.location}>
-            {item.city}, {item.country}
+            {post.city}, {post.country}
           </Text>
         )}
-        {item.description && (
-          <Text style={styles.description}>{item.description}</Text>
+        {post.description && (
+          <Text style={styles.description}>{post.description}</Text>
         )}
-        {(item.image && item.image.length > 0) && (
+        {(post.image && post.image.length > 0) && (
           <FlatList
-            data={item.image}
+            data={post.image}
             renderItem={({ item }) => (
               <Image style={styles.image} source={{ uri: item }} />
             )}
@@ -82,7 +99,7 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: theme.primary,
+    borderColor: theme.secondary,
     marginTop: 10,
   },
   description: {

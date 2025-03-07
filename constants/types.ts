@@ -1,4 +1,4 @@
-import { FieldValue, Timestamp } from "firebase/firestore";
+import { FieldValue } from "firebase/firestore";
 
 export interface User {
   uid: string; // user id

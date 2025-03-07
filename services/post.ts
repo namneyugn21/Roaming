@@ -1,10 +1,10 @@
 import { auth } from "@/config/firebaseConfig"
 import { db } from "@/config/firebaseConfig"
-import { Post } from "@/constants/types";
-import { query, where, collection, getDocs, addDoc, serverTimestamp, Timestamp, orderBy, FieldValue } from "firebase/firestore"
+import { query, where, collection, getDocs, addDoc, Timestamp, orderBy, FieldValue } from "firebase/firestore"
+import { Post } from "@/constants/types"
 
 // fetch the user's post 
-export const fetchUserPosts = async () => {
+export const fetchUserPosts = async (): Promise<Post[]> => {
   try {
     const userId = auth.currentUser?.uid;
     if (!userId) {
@@ -43,7 +43,7 @@ export const fetchUserPosts = async () => {
 };
 
 // fetch all posts
-export const fetchAllPosts = async () => {
+export const fetchAllPosts = async (): Promise<Post[]> => {
   try {
     const userId = auth.currentUser?.uid;
     if (!userId) {
@@ -89,7 +89,6 @@ interface PostData {
   username: string;
   avatar: string;
 }
-
 export const createPost = async ({ uid, image, description, city, country, createdAt, username, avatar }: PostData) => {
   // fetch the current user
   const user = auth.currentUser;

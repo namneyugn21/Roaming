@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/constants/types";
 import { auth } from "@/config/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
@@ -6,7 +5,7 @@ import { db } from "@/config/firebaseConfig";
 
 // retrieve the user from the AsyncStorage
 // they are either exist or not
-export const loadUser = async (): Promise<User | null> => {
+export const fetchCurrentUser = async (): Promise<User | null> => {
   try {
     const user = auth.currentUser;
     if (!user) return null;

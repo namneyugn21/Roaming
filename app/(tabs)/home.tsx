@@ -1,11 +1,11 @@
 import React from "react";
 import { useRef } from "react";
-import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, Animated } from "react-native";
+import { Text, StyleSheet, SafeAreaView, Animated } from "react-native";
 import { useFocusEffect } from "expo-router";
 
 import theme from "@/constants/theme";
 import { Post, User } from "@/constants/types";
-import { loadUser } from "@/services/user";
+import { fetchCurrentUser } from "@/services/user";
 import PostItem from "@/components/PostItem";
 import { fetchAllPosts } from "@/services/post";
 
@@ -17,7 +17,7 @@ export default function HomeScreen() {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const userData = await loadUser(); // retrieve the user
+        const userData = await fetchCurrentUser(); // retrieve the user
         const postsData = await fetchAllPosts(); // retrieve the posts
 
         if (userData) {

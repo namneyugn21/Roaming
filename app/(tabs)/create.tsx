@@ -1,5 +1,4 @@
 import React from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,8 +7,8 @@ import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 import theme from "@/constants/theme";
 import { Post, User } from "@/constants/types";
-import { loadUser } from "@/services/user";
-import { createPost, fetchUserPosts } from "@/services/post";
+import { fetchCurrentUser } from "@/services/user";
+import { createPost } from "@/services/post";
 import { serverTimestamp } from "firebase/firestore";
 
 const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
@@ -24,7 +23,7 @@ export default function CreateScreen() {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const userData = await loadUser(); // retrieve the user
+        const userData = await fetchCurrentUser(); // retrieve the user
         setUser(userData);
       };
       fetchData();
@@ -62,7 +61,7 @@ export default function CreateScreen() {
 
   const handlePost = async () => {
     // retrieve user information 
-    const user = await loadUser();
+    const user = await fetchCurrentUser();
     if (!user) {
       Alert.alert("User not found", "Please login to post!");
       return;

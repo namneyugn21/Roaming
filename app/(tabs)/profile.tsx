@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, Text, Image, View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import theme from "@/constants/theme";
 import { useFocusEffect, useRouter } from "expo-router";
-import { loadUser } from "@/services/user";
+import { fetchCurrentUser } from "@/services/user";
 import { Post, User } from "@/constants/types";
 import PostItem from "@/components/PostItem";
 import { auth } from "@/config/firebaseConfig";
@@ -17,7 +17,7 @@ export default function ProfileScreen() {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const userData = await loadUser();
+        const userData = await fetchCurrentUser();
         const postsData = await fetchUserPosts();
 
         if (userData) {

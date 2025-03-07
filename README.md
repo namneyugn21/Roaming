@@ -51,7 +51,7 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 
 ### Create Post and Profile Screen
 <div> 
-  <img src="assets/images/screenshots/create-post-screen.png" alt="Create Post Screen" width="45%"/> 
+  <img src="assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/> 
   <img src="assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> 
 </div>
 

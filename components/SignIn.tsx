@@ -3,12 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity, StyleSheet
 } from "react-native";
 import theme from "@/constants/theme";
-import { useRouter } from "expo-router";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig";
-import { getDoc, doc } from "firebase/firestore";
-import { db } from "@/config/firebaseConfig";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signIn } from "@/services/auth";
 
 interface SignInProps {
   isSignUp: boolean;
@@ -16,37 +11,9 @@ interface SignInProps {
 }
 
 export default function SignIn({ switchMode }: SignInProps) {
-  const router = useRouter();
   // user info for data entry
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // handle sign in
-  const handleSignIn = async () => {
-    if (!email || !password) {
-      alert("Please fill in all fields");
-      return;
-    }
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // try to get the user document
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-
-      // if user document exists, store the user data in async storage and redirect to home
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        await AsyncStorage.setItem("userData", JSON.stringify(userData));
-      } else {
-        alert("User not found");
-      }
-      router.push("/(tabs)/home");
-    } catch (error) {
-      alert("Invalid email or password");
-    }
-  }
 
   return (
     <View style={styles.overlay}>
@@ -77,7 +44,7 @@ export default function SignIn({ switchMode }: SignInProps) {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
+      <TouchableOpacity style={styles.button} onPress={() => signIn({ email, password })}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
     </View>

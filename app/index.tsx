@@ -28,7 +28,7 @@ export default function WelcomeScreen() {
 
         try {
           // check if the userData already exists in async storage
-          const userData = await AsyncStorage.getItem("userData");
+          const userData = await AsyncStorage.getItem("user");
           if (userData) {
             setIsLoading(false);
             router.push("/(tabs)/home");
@@ -39,7 +39,7 @@ export default function WelcomeScreen() {
           const userDoc = await getDoc(doc(db, "users", user.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            await AsyncStorage.setItem("userData", JSON.stringify(userData));
+            await AsyncStorage.setItem("user", JSON.stringify(userData));
             setIsLoading(false);
             router.push("/(tabs)/home");
           } else {

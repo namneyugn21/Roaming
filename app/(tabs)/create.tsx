@@ -1,6 +1,6 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert } from "react-native";
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -11,7 +11,6 @@ import { Post, User } from "@/constants/types";
 import { loadUser } from "@/services/user";
 import { createPost, fetchUserPosts } from "@/services/post";
 import { serverTimestamp } from "firebase/firestore";
-import { auth } from "@/config/firebaseConfig";
 
 const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
 
@@ -71,7 +70,7 @@ export default function CreateScreen() {
 
     // create new post object
     try {
-      const postRef = await createPost({ // pass the post "raw" gathered data to the createPost function in services/post.tsx
+      await createPost({ // pass the post "raw" gathered data to the createPost function in services/post.tsx
         uid: user.uid,
         image: image || [],
         description: caption || "",
@@ -203,7 +202,7 @@ export default function CreateScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.topContainer}>
+      <ScrollView style={styles.topContainer} contentContainerStyle={{ flexGrow: 1, flexDirection:"row" }} keyboardShouldPersistTaps="always">
         {/* top screen component */}
         <View style={styles.avatarContainer}>
           <Image
@@ -261,7 +260,8 @@ export default function CreateScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </ScrollView>
+      
       {/* bottom screen component that is the post button */}
       <KeyboardAvoidingView
         style={styles.bottomContainer}

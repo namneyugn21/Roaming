@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
-import { Post, User } from '@/constants/types';
+import { Post } from '@/constants/types';
 import theme from '@/constants/theme';
 import { Timestamp } from 'firebase/firestore';
 

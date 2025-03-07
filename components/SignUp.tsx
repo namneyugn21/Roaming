@@ -1,14 +1,8 @@
-import React, { useRef, useState } from "react";
-import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, Animated
-} from "react-native";
-import { useRouter } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import theme from "@/constants/theme";
 import { Dimensions } from "react-native";
-import { setDoc, doc } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/config/firebaseConfig";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signUp } from "@/services/auth";
 
 interface SignUpProps {
   isSignUp: boolean;
@@ -19,7 +13,6 @@ const width = Dimensions.get("window").width; // get the screen width
 const totalSteps = 3; // total steps for sign up
 
 export default function SignUp({ switchMode }: SignUpProps) {
-  const router = useRouter();
   const translateX = useRef(new Animated.Value(0)).current;
   const [steps, setSteps] = useState(0);
 
@@ -53,55 +46,6 @@ export default function SignUp({ switchMode }: SignUpProps) {
     }
   };
 
-  // handle sign up
-  const handleSignUp = async () => {
-    if (!email || !password || !name || !username) {
-      alert("Please fill in all fields");
-      return;
-    }
-
-    try {
-      // create user in firebase authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      if (user) {
-        // create user in firestore
-        try {
-          await setDoc(doc(db, "users", user.uid), {
-            name: name,
-            username: username,
-            email: email,
-            bio: bio,
-            avatar: "https://miro.medium.com/v2/resize:fit:720/1*W35QUSvGpcLuxPo3SRTH4w.png",
-          });
-        } catch (error) {
-          alert("An error occurred. Please try again :(");
-          return;
-        }
-
-        // push the user data to async storage
-        try {
-          await AsyncStorage.setItem("userData", JSON.stringify({
-            name: name,
-            username: username,
-            email: email,
-            bio: bio,
-            avatar: "https://miro.medium.com/v2/resize:fit:720/1*W35QUSvGpcLuxPo3SRTH4w.png",
-          }));
-        } catch (error) {
-          alert("An error occurred. Please try again :(");
-          return;
-        }
-
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Error signing up: ", error);
-      alert("An error occurred. Please try again.");
-    }
-  };
-
   return (
     <View style={styles.overlay}>
       {/* title */}
@@ -121,7 +65,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
             placeholder="Username"
             placeholderTextColor={theme.primary}
             style={styles.input}
-            value={username}
+            value={username.toLowerCase()}
             onChangeText={setUsername}
           />
         </View>
@@ -131,7 +75,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
             placeholder="Email"
             placeholderTextColor={theme.primary}
             style={styles.input}
-            value={email}
+            value={email.toLowerCase()}
             onChangeText={setEmail}
             autoFocus={true}
           />
@@ -175,7 +119,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.navButton} onPress={() => handleSignUp()}>
+          <TouchableOpacity style={styles.navButton} onPress={() => signUp({ name, username, email, password, bio })}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         )}

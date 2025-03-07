@@ -43,15 +43,15 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 
 ## Screenshots  
 
-### Welcome and Home
+### Welcome and Home Screen
 <div> 
   <img src="assets/images/screenshots/welcome-screen.png" alt="Welcome Screen" width="45%"/> 
   <img src="assets/images/screenshots/home-screen.png" alt="Home Screen" width="45%"/> 
 </div>
 
-### Upload Post and Profile
+### Create Post and Profile Screen
 <div> 
-  <img src="assets/images/screenshots/create-post-demo.gif" alt="Post Demo" width="45%"/> 
+  <img src="assets/images/screenshots/create-post-screen.png" alt="Create Post Screen" width="45%"/> 
   <img src="assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> 
 </div>
 

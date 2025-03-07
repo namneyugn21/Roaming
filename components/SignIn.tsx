@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.background,
-    opacity: 0.8,
+    opacity: 1,
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,

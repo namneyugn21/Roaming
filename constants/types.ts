@@ -12,7 +12,7 @@ export interface User {
 export interface Post {
   pid: string;
   uid: string; // user id
-  image: string[] | null;
+  image: string[];
   description: string | null;
   city: string | null;
   country: string | null;

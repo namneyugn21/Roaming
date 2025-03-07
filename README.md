@@ -21,6 +21,9 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 - Displays the app logo and name  
 - Includes a "Get Started" button that navigates to the home screen  
 
+### Authorization Screen  
+- User can now create an account with their email and password. These info will be authenticated by Firebase Authentication service.
+
 ### Home Screen  
 - Displays a main feed with placeholder content  
 - Implemented with FlatList for scalable and efficient content loading  

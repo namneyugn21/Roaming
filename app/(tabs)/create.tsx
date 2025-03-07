@@ -202,77 +202,79 @@ export default function CreateScreen() {
   );
 
   return (
-    <View
-      style={styles.container}
-    >
-      {/* top screen component */}
-      <View style={styles.avatarContainer}>
-        <Image
-          style={styles.avatar}
-          source={{ uri: user?.avatar }}
-        />
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.name}>{user?.username}</Text>
-        {(city && country) && (
-          <Text style={styles.location}>{city}, {country}</Text>
-        )}
-        <TextInput
-          ref={captionInputRef}
-          placeholder="What's on your mind?"
-          placeholderTextColor={theme.primary}
-          multiline={true}
-          autoFocus={true}
-          style={styles.input}
-          value={caption || ""} // bind the caption state to the input value
-          onChangeText={setCaption} // update the caption state when the input changes
-        />
-        {image && (
-          <View style={styles.previewImageContainer}>
-            <FlatList
-              data={image}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              renderItem={({ item }) => (
-                <View style={{ position: "relative" }}>
-                  {/* the preview image component */}
-                  <Image style={styles.previewImage} source={{ uri: item }} />
+    <View style={{ flex: 1 }}>
+      <View style={styles.topContainer}>
+        {/* top screen component */}
+        <View style={styles.avatarContainer}>
+          <Image
+            style={styles.avatar}
+            source={{ uri: user?.avatar }}
+          />
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.name}>{user?.username}</Text>
+          {(city && country) && (
+            <Text style={styles.location}>{city}, {country}</Text>
+          )}
+          <TextInput
+            ref={captionInputRef}
+            placeholder="What's on your mind?"
+            placeholderTextColor={theme.primary}
+            multiline={true}
+            autoFocus={true}
+            style={styles.input}
+            value={caption || ""} // bind the caption state to the input value
+            onChangeText={setCaption} // update the caption state when the input changes
+          />
+          {image && (
+            <View style={styles.previewImageContainer}>
+              <FlatList
+                data={image}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                keyboardShouldPersistTaps="always"
+                renderItem={({ item }) => (
+                  <View style={{ position: "relative" }}>
+                    {/* the preview image component */}
+                    <Image style={styles.previewImage} source={{ uri: item }} />
 
-                  {/* the close button to remove the image */}
-                  <TouchableOpacity onPress={() => handleRemoveImage(item)} style={{ position: "absolute", top: 10, right: 10 }}>
-                    <Ionicons name="close-circle" size={30} color={theme.primary}></Ionicons>
-                  </TouchableOpacity>
-                </View>
-              )}
-              keyExtractor={(item, index) => `${item}-${index}`}
-              contentContainerStyle={{ gap: 5 }}
-            />
+                    {/* the close button to remove the image */}
+                    <TouchableOpacity onPress={() => handleRemoveImage(item)} style={{ position: "absolute", top: 10, right: 10 }}>
+                      <Ionicons name="close-circle" size={30} color={theme.primary}></Ionicons>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                keyExtractor={(item, index) => `${item}-${index}`}
+                contentContainerStyle={{ gap: 5 }}
+              />
+            </View>
+          )}
+          <View style={styles.actions}>
+            <TouchableOpacity onPress={handleImagePicker}>
+              <Ionicons name="images-outline" size={22} color={theme.primary}></Ionicons>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCamera}>
+              <Ionicons name="camera-outline" size={26} color={theme.primary}></Ionicons>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLocation}>
+              <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>
+            </TouchableOpacity>
           </View>
-        )}
-        <View style={styles.actions}>
-          <TouchableOpacity onPress={handleImagePicker}>
-            <Ionicons name="images-outline" size={22} color={theme.primary}></Ionicons>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleCamera}>
-            <Ionicons name="camera-outline" size={26} color={theme.primary}></Ionicons>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleLocation}>
-            <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>
-          </TouchableOpacity>
         </View>
       </View>
-
       {/* bottom screen component that is the post button */}
       <KeyboardAvoidingView
-        style={styles.postContainer}
+        style={styles.bottomContainer}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={110}
       >
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <Text style={styles.messageText}>Share at least one image!</Text>
+        </View>
         <TouchableOpacity
-          style={[styles.postButton, ((caption?.length ?? 0) > 0 || image != null) ? styles.postButtonActive : {}]}
+          style={[styles.postButton, (image != null) ? styles.postButtonActive : {}]}
           onPress={handlePost}
-          disabled={(caption?.length ?? 0) === 0 && image == null}
+          disabled={image == null}
         >
           <Text style={styles.postButtonText}>Post</Text>
         </TouchableOpacity>
@@ -282,7 +284,7 @@ export default function CreateScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  topContainer: {
     flexDirection: "row",
     padding: 15,
     backgroundColor: theme.background,
@@ -324,12 +326,19 @@ const styles = StyleSheet.create({
     marginTop: 15,
     alignItems: "center",
   },
-  postContainer: {
+  bottomContainer: {
     position: "absolute",
     bottom: 0,
     right: 0,
     padding: 20,
     backgroundColor: theme.background,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  messageText: {
+    color: theme.accent,
+    fontSize: 15,
   },
   postButton: {
     backgroundColor: theme.accent,

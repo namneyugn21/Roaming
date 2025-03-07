@@ -11,33 +11,33 @@ interface PostItemProps {
   post: Post;
 }
 
-const PostItem: React.FC<PostItemProps> = ({ avatar, username , post }) => {
+const PostItem: React.FC<PostItemProps> = ({ avatar, username, post }) => {
   const formattedDate =
     post.createdAt instanceof Timestamp
       ? post.createdAt.toDate().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
       : post.createdAt instanceof Date
-      ? post.createdAt.toLocaleDateString("en-US", {
+        ? post.createdAt.toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
         })
-      : "";
+        : "";
 
   return (
     <View style={styles.post}>
       <View style={styles.avatarContainer}>
         <Image style={styles.avatar} source={{ uri: avatar }} />
-        <View style={{ width: 2 , height: "100%", backgroundColor: theme.secondary, flex: 1 }}></View>
+        <View style={{ width: 2, height: "100%", backgroundColor: theme.accent, flex: 1 }}></View>
       </View>
       <View style={styles.infoContainer}>
         {/* display the name, location, and description */}
         <View style={{ flexDirection: "row", gap: 5, alignItems: "baseline", justifyContent: "space-between" }}>
           <Text style={styles.name}>{username}</Text>
-          <Text style={{ color: theme.tertiary }}>{formattedDate}</Text>
+          <Text style={{ color: theme.primary }}>{formattedDate}</Text>
         </View>
         {(post.city && post.country) && (
           <Text style={styles.location}>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: theme.secondary,
+    borderColor: theme.accent,
     marginTop: 10,
   },
   description: {
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 13,
-    color: theme.tertiary,
+    color: theme.primary,
     marginTop: 2,
   },
 });

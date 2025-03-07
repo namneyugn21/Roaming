@@ -1,9 +1,9 @@
 const theme = {
-  background: "#14222d",
-  textColor: "#f7ffff",
-  primary: "#f7ffff",
-  secondary: "#46525e",
-  tertiary: "#b5b5b5", // logo
+  background: "#2f3e30",
+  textColor: "#c7c395",
+  primary: "#8d9076",
+  secondary: "#eeebbb",
+  accent: "#5b604d",
   titleFont: "Monomakh",
 };
 

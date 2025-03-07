@@ -220,7 +220,7 @@ export default function CreateScreen() {
         <TextInput
           ref={captionInputRef}
           placeholder="What's on your mind?"
-          placeholderTextColor={theme.tertiary}
+          placeholderTextColor={theme.primary}
           multiline={true}
           autoFocus={true}
           style={styles.input}
@@ -241,7 +241,7 @@ export default function CreateScreen() {
 
                   {/* the close button to remove the image */}
                   <TouchableOpacity onPress={() => handleRemoveImage(item)} style={{ position: "absolute", top: 10, right: 10 }}>
-                    <Ionicons name="close-circle" size={30} color={"#FFFFFF80"}></Ionicons>
+                    <Ionicons name="close-circle" size={30} color={theme.primary}></Ionicons>
                   </TouchableOpacity>
                 </View>
               )}
@@ -252,13 +252,13 @@ export default function CreateScreen() {
         )}
         <View style={styles.actions}>
           <TouchableOpacity onPress={handleImagePicker}>
-            <Ionicons name="images-outline" size={22} color={theme.tertiary}></Ionicons>
+            <Ionicons name="images-outline" size={22} color={theme.primary}></Ionicons>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleCamera}>
-            <Ionicons name="camera-outline" size={26} color={theme.tertiary}></Ionicons>
+            <Ionicons name="camera-outline" size={26} color={theme.primary}></Ionicons>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLocation}>
-            <Ionicons name="location-outline" size={23} color={theme.tertiary}></Ionicons>
+            <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>
           </TouchableOpacity>
         </View>
       </View>
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 13,
-    color: theme.tertiary,
+    color: theme.primary,
     marginTop: 2,
   },
   input: {
@@ -332,14 +332,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.background,
   },
   postButton: {
-    backgroundColor: theme.tertiary,
+    backgroundColor: theme.accent,
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 20,
     alignItems: "center",
   },
   postButtonActive: {
-    backgroundColor: "white",
+    backgroundColor: theme.secondary,
   },
   postButtonText: {
     color: theme.background,
@@ -356,6 +356,6 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: theme.secondary,
+    borderColor: theme.accent,
   }
 });

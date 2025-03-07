@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { 
+import {
   View, Text, TextInput, TouchableOpacity, StyleSheet
 } from "react-native";
 import theme from "@/constants/theme";
@@ -9,7 +9,7 @@ import { auth } from "@/config/firebaseConfig";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
- 
+
 interface SignInProps {
   isSignUp: boolean;
   switchMode: () => void;
@@ -41,7 +41,7 @@ export default function SignIn({ switchMode }: SignInProps) {
         await AsyncStorage.setItem("userData", JSON.stringify(userData));
       } else {
         alert("User not found");
-      } 
+      }
       router.push("/(tabs)/home");
     } catch (error) {
       alert("Invalid email or password");
@@ -53,20 +53,20 @@ export default function SignIn({ switchMode }: SignInProps) {
       {/* title */}
       <Text style={styles.formHeader}>Welcome back!</Text>
 
-      <TextInput 
-        value={email} 
-        placeholder="Email" 
-        placeholderTextColor={theme.tertiary} 
-        style={styles.input} 
-        autoFocus={true} 
+      <TextInput
+        value={email}
+        placeholder="Email"
+        placeholderTextColor={theme.primary}
+        style={styles.input}
+        autoFocus={true}
         onChangeText={setEmail}
       />
 
-      <TextInput 
-        value={password} 
-        placeholder="Password" 
-        placeholderTextColor={theme.tertiary} 
-        secureTextEntry style={styles.input} 
+      <TextInput
+        value={password}
+        placeholder="Password"
+        placeholderTextColor={theme.primary}
+        secureTextEntry style={styles.input}
         onChangeText={setPassword}
       />
 
@@ -93,12 +93,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     marginBottom: 25,
-    color: "#f7ffff",
+    color: theme.textColor,
   },
   input: {
     width: "100%",
     borderWidth: 1,
-    borderColor: theme.tertiary,
+    borderColor: theme.primary,
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 15,
@@ -107,14 +107,15 @@ const styles = StyleSheet.create({
     color: theme.textColor,
   },
   button: {
-    backgroundColor: theme.tertiary,
+    backgroundColor: theme.background,
+    opacity: 0.8,
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginTop: 20,
   },
   buttonText: {
-    color: theme.background,
+    color: theme.textColor,
     fontSize: 15,
     fontWeight: "bold",
     textAlign: "center",

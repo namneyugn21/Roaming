@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 15,
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: theme.secondary,
+    borderBottomWidth: 2,
+    borderBottomColor: "#DCD7C910",
   },
   avatar: {
     width: 70,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     width: "48%",
     borderWidth: 1,
-    borderColor: theme.secondary,
+    borderColor: theme.accent,
   },
   actionButtonText: {
     color: theme.textColor,

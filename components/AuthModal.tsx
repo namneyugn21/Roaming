@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { 
+import {
   View, TouchableOpacity, Animated, StyleSheet, PanResponder
 } from "react-native";
 import theme from "@/constants/theme";
@@ -23,7 +23,7 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
       setIsVisible(true); // show the modal first
       Animated.timing(translateY, {
         toValue: 50, // move up smoothly
-        duration: 300, 
+        duration: 300,
         useNativeDriver: true,
       }).start();
     } else {
@@ -53,13 +53,13 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
 
   return (
     <View style={styles.overlay}>
-      <Animated.View 
-        style={[styles.formContainer, { transform: [{ translateY }] }]} 
+      <Animated.View
+        style={[styles.formContainer, { transform: [{ translateY }] }]}
         {...panResponder.panHandlers}
       >
         {/* close button */}
         <TouchableOpacity style={{ position: "absolute", top: 15, right: 20 }} onPress={onClose}>
-          <Ionicons name="close" size={30} color={"#f7ffff50"} />
+          <Ionicons name="close" size={30} color={theme.primary} />
         </TouchableOpacity>
 
         {/* render the sign in or sign up form */}
@@ -84,49 +84,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: "100%",
     height: "95%",
-    backgroundColor: theme.secondary,
+    backgroundColor: theme.accent,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: theme.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-  },
-  formHeader: {
-    fontSize: 35,
-    fontWeight: "bold",
-    marginTop: 10,
-    marginBottom: 25,
-    color: "#f7ffff",
-  },
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: theme.tertiary,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    marginBottom: 10,
-    fontSize: 15,
-  },
-  button: {
-    backgroundColor: theme.tertiary,
-    borderRadius: 10,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    marginTop: 20,
-  },
-  buttonText: {
-    color: theme.background,
-    fontSize: 15,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  switchText: {
-    color: theme.textColor,
-    fontSize: 14,
-    textAlign: "right",
-  },
+  }
 });

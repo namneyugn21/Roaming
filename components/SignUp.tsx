@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { 
+import {
   View, Text, TextInput, TouchableOpacity, StyleSheet, Animated
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -79,7 +79,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
           alert("An error occurred. Please try again :(");
           return;
         }
-        
+
         // push the user data to async storage
         try {
           await AsyncStorage.setItem("userData", JSON.stringify({
@@ -111,7 +111,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
         <View style={styles.stepsContainer}>
           <TextInput
             placeholder="Name"
-            placeholderTextColor={theme.tertiary}
+            placeholderTextColor={theme.primary}
             style={styles.input}
             autoFocus={true}
             value={name}
@@ -119,7 +119,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
           />
           <TextInput
             placeholder="Username"
-            placeholderTextColor={theme.tertiary}
+            placeholderTextColor={theme.primary}
             style={styles.input}
             value={username}
             onChangeText={setUsername}
@@ -129,7 +129,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
         <View style={styles.stepsContainer}>
           <TextInput
             placeholder="Email"
-            placeholderTextColor={theme.tertiary}
+            placeholderTextColor={theme.primary}
             style={styles.input}
             value={email}
             onChangeText={setEmail}
@@ -137,7 +137,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
           />
           <TextInput
             placeholder="Password"
-            placeholderTextColor={theme.tertiary}
+            placeholderTextColor={theme.primary}
             secureTextEntry
             style={styles.input}
             value={password}
@@ -148,7 +148,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
         <View style={styles.stepsContainer}>
           <TextInput
             placeholder="Add some quirkiness to your bio!"
-            placeholderTextColor={theme.tertiary}
+            placeholderTextColor={theme.primary}
             style={styles.bioInput}
             multiline={true}
             value={bio}
@@ -165,7 +165,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
         </Text>
       </TouchableOpacity>
 
-      
+
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <TouchableOpacity style={styles.navButton} onPress={moveLeft} disabled={steps === 0}>
           <Text style={styles.buttonText} >Back</Text>
@@ -180,7 +180,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
           </TouchableOpacity>
         )}
       </View>
-      
+
     </View>
   );
 }
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   input: {
     width: width - 40, // subtract the padding (of the parent container) from the width
     borderWidth: 1,
-    borderColor: theme.tertiary,
+    borderColor: theme.primary,
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 15,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   bioInput: {
     width: width - 40, // subtract the padding (of the parent container) from the width
     borderWidth: 1,
-    borderColor: theme.tertiary,
+    borderColor: theme.primary,
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 15,
@@ -229,14 +229,16 @@ const styles = StyleSheet.create({
     color: theme.textColor,
   },
   button: {
-    backgroundColor: theme.tertiary,
+    backgroundColor: theme.background,
+    opacity: 0.8,
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginTop: 20,
   },
   navButton: {
-    backgroundColor: theme.tertiary,
+    backgroundColor: theme.background,
+    opacity: 0.8,
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,
@@ -244,7 +246,7 @@ const styles = StyleSheet.create({
     width: "48%",
   },
   buttonText: {
-    color: theme.background,
+    color: theme.textColor,
     fontSize: 15,
     fontWeight: "bold",
     textAlign: "center",

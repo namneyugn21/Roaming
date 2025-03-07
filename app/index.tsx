@@ -33,7 +33,7 @@ export default function WelcomeScreen() {
             setIsLoading(false);
             router.push("/(tabs)/home");
             return;
-          } 
+          }
 
           // if the userData does not exist, get the user document from firestore
           const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -71,24 +71,24 @@ export default function WelcomeScreen() {
         <Text style={styles.title}>Roaming</Text>
       </View>
 
-    {isLoading ? 
-      <ActivityIndicator style={{ position: 'absolute', bottom: 100 }} size="large" color={theme.tertiary} /> 
-      : 
-      <>
-        {/* sign in button */}
-        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-          <Text style={styles.buttonText}>Sign In with Email</Text>
-        </TouchableOpacity>
+      {isLoading ?
+        <ActivityIndicator style={{ position: 'absolute', bottom: 100 }} size="large" color={theme.accent} />
+        :
+        <>
+          {/* sign in button */}
+          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+            <Text style={styles.buttonText}>Sign In with Email</Text>
+          </TouchableOpacity>
 
-        {/* auth Modal */}
-        <AuthModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          isSignUp={isSignUp}
-          switchMode={() => setIsSignUp(!isSignUp)}
-        />
-      </>
-    }
+          {/* auth Modal */}
+          <AuthModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            isSignUp={isSignUp}
+            switchMode={() => setIsSignUp(!isSignUp)}
+          />
+        </>
+      }
     </SafeAreaView>
   );
 }
@@ -100,35 +100,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    backgroundImage: "url(')",
   },
   subContainer: {
     position: "absolute",
     top: "50%",
-    transform: [{ translateY: -60 }],
+    transform: [{ translateY: -100 }],
     alignItems: "center",
     width: "100%",
   },
   title: {
     fontSize: 32,
     fontFamily: theme.titleFont,
-    color: theme.tertiary,
-    marginTop: -35,
+    color: theme.textColor,
   },
   logo: {
-    width: 150,
-    height: 120,
+    width: 90,
+    height: 90,
+    borderRadius: "100%",
+    marginBottom: 10,
   },
   button: {
     position: "absolute",
     bottom: 75,
-    backgroundColor: theme.tertiary,
+    backgroundColor: theme.accent,
     borderRadius: 50,
     width: 200,
     paddingVertical: 15,
     alignItems: "center",
   },
   buttonText: {
-    color: theme.background,
+    color: theme.textColor,
     fontSize: 15,
     fontWeight: "bold",
   },

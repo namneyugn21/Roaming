@@ -11,12 +11,12 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: "white", // active tab color (white)
-        tabBarInactiveTintColor: "gray",  // inactive tab color (gray)
+        tabBarActiveTintColor: theme.secondary, // active tab color (white)
+        tabBarInactiveTintColor: theme.primary,  // inactive tab color (gray)
         tabBarShowLabel: false, // hide the tab labels
         headerStyle: {
           backgroundColor: theme.background,
-          shadowColor: theme.tertiary,
+          shadowColor: theme.accent,
         },
         headerTintColor: "white",
       }}
@@ -44,9 +44,9 @@ export default function TabLayout() {
             <Ionicons
               name={"add-outline"}
               size={30}
-              color={focused ? theme.primary : color}
+              color={theme.background}
               style={{
-                backgroundColor: focused ? "white" : theme.secondary,
+                backgroundColor: focused ? theme.secondary : theme.primary,
                 borderRadius: 10,
                 width: 40,
                 height: 35,

@@ -16,7 +16,7 @@ export default {
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/roaming-icon.png",
-        "backgroundColor": "#14222d"
+        "backgroundColor": "#2f3e30"
       }
     },
     "web": {
@@ -27,7 +27,7 @@ export default {
     "splash": {
       "image": "./assets/images/roaming-logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#14222d"
+      "backgroundColor": "#2f3e30"
     },
     "plugins": [
       "expo-router"

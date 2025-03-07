@@ -12,6 +12,7 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 
 - **React Native**: a framework for building mobile applications using JavaScript and React, allowing developers to create cross-platform apps for iOS and Android with a single codebase.
 - **Expo**: a framework and platform built on top of React Native that simplifies development by providing pre-configured tools, libraries, and a managed workflow to streamline the process of building and deploying mobile apps.
+- **Firebase**: a backend-as-a-service (BaaS) by Google that provides Authentication for user sign-in and Firestore/Realtime Database for real-time data storage and syncing, simplifying backend management for mobile and web apps.
 
 ---
 
@@ -38,7 +39,6 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 
 ## Future Enhancements  
 
-- User Authentication – Allow users to sign in and store their travel logs securely  
 - Location Mapping – Pin visited places on an interactive map  
 - Multi-language Support – Expand accessibility for a global audience  
 
@@ -66,7 +66,6 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 Clone the Repository  
 ```sh
 git clone https://github.com/your-username/roaming-app.git
-cd roaming-app
 ```
 Install Dependencies
 ```sh

@@ -2,6 +2,9 @@ import { auth } from "@/config/firebaseConfig"
 import { db } from "@/config/firebaseConfig"
 import { query, where, collection, getDocs, addDoc, Timestamp, orderBy, FieldValue } from "firebase/firestore"
 import { Post } from "@/constants/types"
+import { upload } from "cloudinary-react-native"
+import { cld } from "@/config/cloudinaryConfig"
+import { UploadApiResponse } from "cloudinary-react-native/lib/typescript/src/api/upload/model/params/upload-params"
 
 // fetch the user's post 
 export const fetchUserPosts = async (): Promise<Post[]> => {
@@ -89,6 +92,36 @@ interface PostData {
   username: string;
   avatar: string;
 }
+
+const uploadImage = async (image: string) => {
+  // check if there's an image to upload
+  if (!image) {
+    return;
+  }
+
+  // options for uploading the image
+  const options = {
+    upload_preset: "roaming-app",
+    unsigned: true,
+  }
+
+  // upload the image to cloudinary
+  // and return the response
+  return new Promise<UploadApiResponse>(async (resolve, reject) =>{
+    await upload(cld, {
+      file: image,
+      options: options,
+      callback: (error: any, response: any) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(response);
+        }
+      }
+    })
+  })
+}
+
 export const createPost = async ({ uid, image, description, city, country, createdAt, username, avatar }: PostData) => {
   // fetch the current user
   const user = auth.currentUser;
@@ -97,10 +130,19 @@ export const createPost = async ({ uid, image, description, city, country, creat
     return;
   }
 
+  // upload the image to the cloud storage
+  const imageURLs: string[] = [];
+  for (const img of image) {
+    const response = await uploadImage(img);
+    if (response) {
+      imageURLs.push(response.secure_url);
+    }
+  }
+
   try {
     await addDoc(collection(db, "posts"), {
       uid: uid,
-      image: image,
+      image: imageURLs,
       description: description,
       city: city,
       country: country,

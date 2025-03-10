@@ -13,6 +13,7 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 - **React Native**: a framework for building mobile applications using JavaScript and React, allowing developers to create cross-platform apps for iOS and Android with a single codebase.
 - **Expo**: a framework and platform built on top of React Native that simplifies development by providing pre-configured tools, libraries, and a managed workflow to streamline the process of building and deploying mobile apps.
 - **Firebase**: a backend-as-a-service (BaaS) by Google that provides Authentication for user sign-in and Firestore/Realtime Database for real-time data storage and syncing, simplifying backend management for mobile and web apps.
+- **Cloudinary**: a cloud-based media management platform for uploading, optimizing, and delivering images and videos with real-time transformations and a global CDN for fast performance.
 
 ---
 

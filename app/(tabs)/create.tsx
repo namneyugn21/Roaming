@@ -104,7 +104,7 @@ export default function CreateScreen() {
       aspect: [4, 5],
       allowsMultipleSelection: true,
       selectionLimit: 10,
-      quality: 1,
+      quality: 0.5,
       orderedSelection: true,
     });
 

@@ -39,3 +39,6 @@ app-example
 
 # env
 .env
+
+# firebase
+firebase-key.json

@@ -149,4 +149,4 @@ This project is licensed under the **MIT License**.
 -----------
 
 📧 **Email**: vhn1@sfu.ca\
-🌐 **Portfolio**: [Nam Nguyen's Porfolio](https://namneyugn21.github.io)\
+🌐 **Portfolio**: [Nam Nguyen's Porfolio](https://namneyugn21.github.io)

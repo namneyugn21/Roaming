@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     color: theme.textColor,
   },
   button: {
-    backgroundColor: theme.background,
+    backgroundColor: theme.accent,
     opacity: 0.8,
     borderRadius: 10,
     paddingVertical: 15,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   navButton: {
-    backgroundColor: theme.background,
+    backgroundColor: theme.accent,
     opacity: 0.8,
     borderRadius: 10,
     paddingVertical: 15,

@@ -8,11 +8,13 @@ import PostItem from "@/components/PostItem";
 import { auth } from "@/config/firebase";
 import { fetchUserPosts } from "@/services/post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import EditModal from "@/components/EditModal";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const [user, setUser] = React.useState<User>();
   const [posts, setPosts] = React.useState<Post[]>([]);
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   // load the user and posts when the screen is loaded
   useFocusEffect(
@@ -65,7 +67,7 @@ export default function ProfileScreen() {
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => { }}
+                onPress={() => setModalVisible(true)}
               >
                 <Text style={styles.actionButtonText}>Edit profile</Text>
               </TouchableOpacity>
@@ -88,7 +90,13 @@ export default function ProfileScreen() {
           />
         ))}
       </ScrollView>
+      {/* auth Modal */}
+      <EditModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
+    
   );
 }
 

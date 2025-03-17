@@ -77,11 +77,11 @@ const uploadImage = async (image: string) => {
 
 export const createPost = async ({ uid, image, description, latitude, longitude, username, avatar }: PostData) => {
   // upload the image to the cloud storage
-  const imageURLs: string[] = [];
+  const cloudImage = [];
   for (const img of image) {
     const response = await uploadImage(img);
     if (response) {
-      imageURLs.push(response.secure_url);
+      cloudImage.push({ url: response.secure_url, public_id: response.public_id });
     }
   }
 
@@ -89,7 +89,7 @@ export const createPost = async ({ uid, image, description, latitude, longitude,
     // send post request to backend
     let response = await api.post("/posts", {
       uid,
-      image: imageURLs, // Send Base64 images
+      image: cloudImage, // Send Base64 images
       description,
       latitude,
       longitude,

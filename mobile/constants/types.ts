@@ -11,7 +11,7 @@ export interface User {
 export interface Post {
   pid: string;
   uid: string; // user id
-  image: string[];
+  image: {url: string, public_id: string}[]; // image url and public id
   description: string | null;
   latitude: string | null;
   longitude: string | null;

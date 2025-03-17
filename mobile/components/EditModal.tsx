@@ -1,21 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, TouchableOpacity, Animated, StyleSheet, PanResponder,
-  TouchableWithoutFeedback
+  View, TouchableOpacity, Animated, StyleSheet, PanResponder, TouchableWithoutFeedback
 } from "react-native";
 import theme from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import SignIn from "@/components/SignIn";
-import SignUp from "@/components/SignUp";
 
-interface AuthModalProps {
+interface EditModalProps {
   visible: boolean;
   onClose: () => void;
-  isSignUp: boolean;
-  switchMode: () => void;
 }
 
-export default function AuthModal({ visible, onClose, isSignUp, switchMode }: AuthModalProps) {
+export default function EditModal({ visible, onClose }: EditModalProps) {
   const translateY = useRef(new Animated.Value(800)).current; // start below the screen
   const [isVisible, setIsVisible] = useState(visible);
 
@@ -23,7 +18,7 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
     if (visible) {
       setIsVisible(true); // show the modal first
       Animated.timing(translateY, {
-        toValue: 50, // move up smoothly
+        toValue: 0, // move up smoothly
         duration: 300,
         useNativeDriver: true,
       }).start();
@@ -63,13 +58,6 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
           <TouchableOpacity style={{ position: "absolute", top: 15, right: 20 }} onPress={onClose}>
             <Ionicons name="close" size={30} color={theme.primary} />
           </TouchableOpacity>
-
-          {/* render the sign in or sign up form */}
-          {isSignUp ? (
-            <SignUp switchMode={switchMode} isSignUp={isSignUp} />
-          ) : (
-            <SignIn switchMode={switchMode} isSignUp={isSignUp} />
-          )}
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>

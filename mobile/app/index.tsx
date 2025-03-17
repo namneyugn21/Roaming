@@ -13,7 +13,6 @@ export default function WelcomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
 
   // check if user is already signed in
   useEffect(() => {
@@ -34,7 +33,6 @@ export default function WelcomeScreen() {
         });
 
         if (response.status === 200) { // token is valid and user is signed in
-          setUser(response.data);
           await AsyncStorage.setItem("user", JSON.stringify(response.data));
           router.navigate("/(tabs)/home");
         } else {

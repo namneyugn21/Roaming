@@ -62,7 +62,7 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post }) => {
         {(city && country) && (
           <Text style={styles.location}>
             {city}, {country}
-          </Text>
+          </Text> 
         )}
         {post.description && (
           <Text style={styles.description}>{post.description}</Text>
@@ -71,7 +71,7 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post }) => {
           <FlatList
             data={post.image}
             renderItem={({ item }) => (
-              <Image style={styles.image} source={{ uri: item }} />
+              <Image style={styles.image} source={{ uri: item.url }} />
             )}
             keyExtractor={(item, index) => `${item}-${index}`} // uri-0, uri-1, ... to avoid duplicate keys
             horizontal={true}

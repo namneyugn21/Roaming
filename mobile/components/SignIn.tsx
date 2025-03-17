@@ -54,7 +54,7 @@ export default function SignIn({ switchMode }: SignInProps) {
 
       {/* display error message */}
       {error ?         
-        <Text style={{ color: "#4A0D0D", marginTop: -5, marginBottom: 15, marginLeft: 5 }}>{error}</Text>
+        <Text style={{ color: "#FF6B6B", marginTop: -5, marginBottom: 15, marginLeft: 5 }}>{error}</Text>
         : null
       }
     
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: theme.textColor,
   },
   button: {
-    backgroundColor: theme.background,
+    backgroundColor: theme.accent,
     opacity: 1,
     borderRadius: 10,
     paddingVertical: 15,

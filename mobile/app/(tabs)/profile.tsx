@@ -91,10 +91,13 @@ export default function ProfileScreen() {
         ))}
       </ScrollView>
       {/* auth Modal */}
-      <EditModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
+      {user && (
+        <EditModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          user={user}
+        />
+      )}
     </SafeAreaView>
     
   );

@@ -5,7 +5,7 @@ import theme from "../constants/theme";
 import { User } from "firebase/auth";
 import { getDoc, doc } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AuthModal from "../components/AuthModal";
+import AuthModal from "../components/auth/AuthModal";
 import { api } from "@/services/api";
 
 export default function WelcomeScreen() {

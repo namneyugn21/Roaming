@@ -89,7 +89,7 @@ export const createPost = async ({ uid, image, description, latitude, longitude,
     // send post request to backend
     let response = await api.post("/posts", {
       uid,
-      image: cloudImage, // Send Base64 images
+      image: cloudImage,
       description,
       latitude,
       longitude,

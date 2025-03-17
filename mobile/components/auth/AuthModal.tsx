@@ -5,8 +5,8 @@ import {
 } from "react-native";
 import theme from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import SignIn from "@/components/SignIn";
-import SignUp from "@/components/SignUp";
+import SignIn from "@/components/auth/SignIn";
+import SignUp from "@/components/auth/SignUp";
 
 interface AuthModalProps {
   visible: boolean;
@@ -60,8 +60,8 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
           {...panResponder.panHandlers}
         >
           {/* close button */}
-          <TouchableOpacity style={{ position: "absolute", top: 15, right: 20 }} onPress={onClose}>
-            <Ionicons name="close" size={30} color={theme.primary} />
+          <TouchableOpacity style={{ position: "absolute", top: 20, right: 20, zIndex: 1000 }} onPress={onClose}>
+            <Ionicons name="close" size={35} color={theme.primary} />
           </TouchableOpacity>
 
           {/* render the sign in or sign up form */}

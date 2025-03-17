@@ -49,30 +49,12 @@ With no likes, no follower counts, and no pressure, Roaming is an invitation to 
 
 ### Welcome and Home Screen
 <div> 
-  <img src="assets/images/screenshots/welcome-screen.png" alt="Welcome Screen" width="45%"/> 
-  <img src="assets/images/screenshots/home-screen.png" alt="Home Screen" width="45%"/> 
+  <img src="/mobile/assets/images/screenshots/welcome-screen.png" alt="Welcome Screen" width="45%"/> 
+  <img src="/mobile/assets/images/screenshots/home-screen.png" alt="Home Screen" width="45%"/> 
 </div>
 
 ### Create Post and Profile Screen
 <div> 
-  <img src="assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/> 
-  <img src="assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> 
+  <img src="/mobile/assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/> 
+  <img src="/mobile/assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> 
 </div>
-
-
----
-
-## Installation & Setup  
-
-Clone the Repository  
-```sh
-git clone https://github.com/your-username/roaming-app.git
-```
-Install Dependencies
-```sh
-npm install
-```
-Run the Expo Development Server
-```sh
-npx expo start
-```

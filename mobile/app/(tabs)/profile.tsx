@@ -96,6 +96,7 @@ export default function ProfileScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           user={user}
+          onUpdate={(updatedUser) => setUser(updatedUser)} // update the user in the parent component
         />
       )}
     </SafeAreaView>

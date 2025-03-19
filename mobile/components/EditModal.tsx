@@ -4,17 +4,21 @@ import {
 } from "react-native";
 import theme from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/constants/types";
+import { updateCurrentUser } from "@/services/user";
 
 interface EditModalProps {
   visible: boolean;
   onClose: () => void;
   user: User;
+  onUpdate: (updatedUser: User) => void;
 }
 
-export default function EditModal({ visible, onClose, user }: EditModalProps) {
+export default function EditModal({ visible, onClose, user, onUpdate }: EditModalProps) {
   const translateY = useRef(new Animated.Value(800)).current; // start below the screen
   const [isVisible, setIsVisible] = useState(visible);
+  const [isEditing, setIsEditing] = useState(false);
 
   // user input states
   const [username, setUsername] = useState(user.username);
@@ -25,11 +29,16 @@ export default function EditModal({ visible, onClose, user }: EditModalProps) {
   useEffect(() => {
     if (visible) {
       setIsVisible(true); // show the modal first
+      
       // reset the user input states
       setUsername(user.username);
       setName(user.name);
       setAvatar(user.avatar);
       setBio(user.bio);
+
+      // reset the editing state
+      setIsEditing(false);
+
       // smoothly animate modal up
       Animated.timing(translateY, {
         toValue: 0, // move up smoothly
@@ -60,6 +69,23 @@ export default function EditModal({ visible, onClose, user }: EditModalProps) {
   ).current;
 
   if (!isVisible) return null;
+
+  // handle form submission
+  const handleSave = async () => {
+    const response = await updateCurrentUser({ username, name, bio: bio || "" });
+
+    if (response) {
+      const updatedUser = { ...user, username, name, bio };
+
+      try {
+        AsyncStorage.setItem("user", JSON.stringify(updatedUser)); // update the cached user
+        onUpdate(updatedUser); // update the user in the parent component
+        onClose(); // close the modal
+      } catch (error) {
+        console.error("Error updating AsyncStorage:", error);
+      }
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={onClose}>
@@ -92,22 +118,35 @@ export default function EditModal({ visible, onClose, user }: EditModalProps) {
                   placeholder="Username"
                   style={styles.input}
                   value={username}
-                  onChangeText={setUsername}
+                  onChangeText={(text) => {
+                    setUsername(text);
+                    setIsEditing(user.username !== text);
+                  }}
                 />
                 <TextInput
                   placeholder="Name"
                   style={styles.input}
                   value={name}
-                  onChangeText={setName}
+                  onChangeText={(text) => {
+                    setName(text);
+                    setIsEditing(user.name !== text);
+                  }}
                 />
                 <TextInput
                   placeholder="Bio"
                   multiline
                   style={styles.bioInput}
                   value={bio || ""}
-                  onChangeText={setBio}
+                  onChangeText={(text) => {
+                    setBio(text);
+                    setIsEditing(user.bio !== text);
+                  }}
                 />
-                <TouchableOpacity style={{ backgroundColor: theme.accent, padding: 15, borderRadius: 10 }}>
+                <TouchableOpacity 
+                  style={{ backgroundColor: theme.accent, padding: 15, borderRadius: 10, opacity: isEditing ? 1 : 0.5 }} 
+                  onPress={() => handleSave() }
+                  disabled={!isEditing}
+                >
                   <Text style={{ color: theme.textColor, textAlign: "center", fontWeight: "bold" }}>Save changes</Text>
                 </TouchableOpacity>
               </ScrollView>

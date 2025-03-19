@@ -9,6 +9,9 @@ router.post("/register", userController.register);
 // get the current signed in user
 router.get("/me", verifyToken, userController.getCurrentUser);
 
+// update the current signed in user
+router.put("/me", verifyToken, userController.updateCurrentUser);
+
 // get the current signed in user posts
 router.get("/:userId/posts", verifyToken, userController.getCurrentUserPosts);
 

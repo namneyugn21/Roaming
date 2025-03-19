@@ -59,6 +59,41 @@ exports.getCurrentUser = async (req, res) => {
   }
 }
 
+// update the current signed in user
+exports.updateCurrentUser = async (req, res) => {
+  try {
+    const user = req.user; // get user from request object middleware
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // get user data from request body
+    const { 
+      username,
+      name,
+      bio
+    } = req.body;
+
+    if (!name || !username) {
+      return res.status(400).json({ error: 'Name and username are required' });
+    }
+
+    // update user data in firestore
+    const userData = {
+      name,
+      username,
+      bio,
+    };
+    await db.collection('users').doc(user.uid).update(userData);
+
+    res.status(200).json({ message: "User updated", userData });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+}
+
 // get the user posts
 exports.getCurrentUserPosts = async (req, res) => {
   try {
@@ -82,7 +117,6 @@ exports.getCurrentUserPosts = async (req, res) => {
       pid: doc.id, // get the post id
       ...doc.data() // get all the fields from the document
     }));
-    console.log(posts);
     res.status(200).json({ posts });
   } catch (error) {
     console.error("Error fetching user posts:", error);

@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, TouchableOpacity, Animated, StyleSheet, PanResponder, TouchableWithoutFeedback, Text, TextInput, Image, ScrollView, KeyboardAvoidingView, Platform
+  View, TouchableOpacity, Animated, StyleSheet, PanResponder, TouchableWithoutFeedback, Text, TextInput, Image, ScrollView, KeyboardAvoidingView, Platform,
+  Alert
 } from "react-native";
 import theme from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/constants/types";
 import { updateCurrentUser } from "@/services/user";
+import * as ImagePicker from "expo-image-picker";
 
 interface EditModalProps {
   visible: boolean;
@@ -72,10 +74,20 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
 
   // handle form submission
   const handleSave = async () => {
-    const response = await updateCurrentUser({ username, name, bio: bio || "" });
+    // check if the current user pfp is hosted on Cloudinary
+    const public_id = typeof user.avatar === "string" ? null : user.avatar.public_id; // null if not Cloudinary, otherwise we will pass the public_id for deletion
+
+    const response = await updateCurrentUser({ 
+      userId: user.uid,
+      username, 
+      name, 
+      bio: bio || "", 
+      avatar: typeof avatar === "string" ? avatar : avatar.url,
+      public_id, // pass the public_id to delete the old avatar if it's hosted on Cloudinary
+    });
 
     if (response) {
-      const updatedUser = { ...user, username, name, bio };
+      const updatedUser = { ...user, username, name, bio, avatar };
 
       try {
         AsyncStorage.setItem("user", JSON.stringify(updatedUser)); // update the cached user
@@ -84,6 +96,35 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
       } catch (error) {
         console.error("Error updating AsyncStorage:", error);
       }
+    }
+  };
+
+  // open image picker
+  const handleImagePicker = async () => {
+    // Define a helper function to request permissions
+    const requestPermission = async () => {
+      const status = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      return status;
+    }
+    
+    const hasPermission = await requestPermission();
+    
+    if (!hasPermission) {
+      Alert.alert("Permission Required", "Allow the app to access the images to select photos!");
+      return;
+    }
+
+    let pfp = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images",
+      aspect: [1, 1],
+      selectionLimit: 1,
+      quality: 0.5,
+      allowsEditing: true,
+    });
+
+    if (!pfp.canceled) {
+      setAvatar(pfp.assets[0].uri);
+      setIsEditing(true);
     }
   };
 
@@ -109,9 +150,9 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
               style={{ flex: 1 }}
               keyboardVerticalOffset={Platform.OS === "ios" ? 110 : 0}
             >
-              <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-                <TouchableOpacity style={styles.avatar}>
-                  <Image source={{ uri: avatar }} style={styles.avatar} />
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <TouchableOpacity style={styles.avatar} onPress={handleImagePicker}>
+                  <Image source={{ uri: typeof avatar === "string" ? avatar : avatar.url }} style={styles.avatar} />
                   <Ionicons name="camera" size={15} color={theme.primary} style={styles.editAvatar} />
                 </TouchableOpacity>
                 <TextInput

@@ -1,6 +1,6 @@
 export interface User {
   uid: string; // user id
-  avatar: string; // user avatar
+  avatar: string | {url: string, public_id: string}; // user avatar
   username: string; // username
   email: string; // email
   name: string; // name
@@ -17,5 +17,5 @@ export interface Post {
   longitude: string | null;
   createdAt: any; // timestamp
   username: string; // username
-  avatar: string; // user avatar
+  avatar: string | {url: string, public_id: string}; // user avatar
 }

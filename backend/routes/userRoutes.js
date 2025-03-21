@@ -15,4 +15,7 @@ router.put("/me", verifyToken, userController.updateCurrentUser);
 // get the current signed in user posts
 router.get("/:userId/posts", verifyToken, userController.getCurrentUserPosts);
 
+// update the current user posts avatar
+router.put("/:userId/posts", verifyToken, userController.updateCurrentUserPosts);
+
 module.exports = router;

@@ -57,7 +57,7 @@ export const signIn = async ({ email, password }: SignInProps): Promise<{ succes
       },
     });
 
-    console.log("User signed in:", reponse.data);
+    console.log(`User signed in, hello ${reponse.data.name}!`);
     await AsyncStorage.setItem("user", JSON.stringify(reponse.data));
     router.push("/(tabs)/home");
     return { success: true };

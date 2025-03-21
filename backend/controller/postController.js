@@ -1,5 +1,6 @@
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const db = getFirestore();
+const cloudinary = require("../config/cloudinary");
 
 exports.getAllPosts = async (req, res) => {
   try {
@@ -52,3 +53,22 @@ exports.createPost = async (req, res) => {
     res.status(500).json({ error: "Failed to create post" });
   }
 }
+
+exports.deleteImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    if (!imageId) {
+      return res.status(400).json({ error: "Image ID is required" });
+    }
+
+    // delete image from cloudinary
+    await cloudinary.uploader.destroy(imageId);
+
+    res.status(200).json({ message: "Image deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete image" });
+  }
+}
+

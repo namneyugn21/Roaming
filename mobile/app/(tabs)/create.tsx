@@ -55,6 +55,7 @@ export default function CreateScreen() {
   const [image, setImage] = React.useState<string[] | null>(null); // store the image uri
 
   // Location state
+  const [toggleLocation, setToggleLocation] = React.useState<boolean>(false); // toggle the location
   const [city, setCity] = React.useState<string | null>(null); // store the city name
   const [country, setCountry] = React.useState<string | null>(null); // store the country name
   const [latitude, setLatitude] = React.useState<string | null>(null); // store the latitude
@@ -77,7 +78,7 @@ export default function CreateScreen() {
         latitude: latitude || "",
         longitude: longitude || "",
         username: user.username,
-        avatar: user.avatar,
+        avatar: typeof user.avatar === "string" ? user.avatar : user.avatar.url,
       });
       router.replace("/(tabs)/home"); // navigate to the Home screen
     } catch (error) {
@@ -133,25 +134,35 @@ export default function CreateScreen() {
 
   {/* handle the location */ }
   const handleLocation = async () => {
-    const hasPermission = await requestPermission("location");
-    if (!hasPermission) {
-      Alert.alert("Permission Required", "Allow the app to access the location to get your current location!");
-      return
-    }
+    if (toggleLocation) {
+      setCity(null);
+      setCountry(null);
+      setLatitude(null);
+      setLongitude(null);
+      setToggleLocation(false);
+      return;
+    } else {
+      setToggleLocation(true);
+      const hasPermission = await requestPermission("location");
+      if (!hasPermission) {
+        Alert.alert("Permission Required", "Allow the app to access the location to get your current location!");
+        return
+      }
 
-    // get the location object
-    let location = await Location.getCurrentPositionAsync({});
-    if (location) {
-      const { coords } = location;
-      const { latitude, longitude } = coords;
-      setLatitude(latitude.toString());
-      setLongitude(longitude.toString());
+      // get the location object
+      let location = await Location.getCurrentPositionAsync({});
+      if (location) {
+        const { coords } = location;
+        const { latitude, longitude } = coords;
+        setLatitude(latitude.toString());
+        setLongitude(longitude.toString());
 
-      // get the city and country names from the latitude and longitude
-      let address = await Location.reverseGeocodeAsync({ latitude, longitude });
-      if (address.length > 0) {
-        setCity(address[0].city);
-        setCountry(address[0].country);
+        // get the city and country names from the latitude and longitude
+        let address = await Location.reverseGeocodeAsync({ latitude, longitude });
+        if (address.length > 0) {
+          setCity(address[0].city);
+          setCountry(address[0].country);
+        }
       }
     }
   }
@@ -214,7 +225,7 @@ export default function CreateScreen() {
             <View style={styles.avatarContainer}>
               <Image
                 style={styles.avatar}
-                source={{ uri: user?.avatar }}
+                source={{ uri: typeof user?.avatar === "string" ? user.avatar : user?.avatar?.url }}
               />
             </View>
             <View style={styles.infoContainer}>
@@ -263,7 +274,9 @@ export default function CreateScreen() {
                   <Ionicons name="camera-outline" size={26} color={theme.primary}></Ionicons>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleLocation}>
-                  <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>
+                  {toggleLocation === true ?
+                    <Ionicons name="location-sharp" size={23} color={theme.primary}></Ionicons>
+                  : <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>}
                 </TouchableOpacity>
               </View>
             </View>

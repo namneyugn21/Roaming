@@ -97,7 +97,7 @@ export const createPost = async ({ uid, image, description, latitude, longitude,
       avatar,
     });
 
-    console.log("Post created:", response.data);
+    console.log(`Post ${response.data.pid} created successfully!`);
     return response.data; // Return API response
   } catch (error) {
     console.log("Error creating post:", error);

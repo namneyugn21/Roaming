@@ -52,6 +52,12 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 -   Supports **capturing images** via the device camera.
 -   Users **grant permissions** for location, camera, and photo library access via the Expo API.
 
+#### **Edit User Profile**
+
+-   Users can update their username, display name, bio, and avatar.
+-   Any changes to the profile will automatically reflect on their posts (if applicable).
+-   When updating the avatar, the system will efficiently manage storage by deleting the old avatar from Cloudinary, ensuring optimal space usage.
+
 * * * * *
 
 ### **Backend Features (New Integration)**
@@ -112,9 +118,13 @@ This starts the **Express server** on `http://localhost:3000`.
 
 <div> <img src="/mobile/assets/images/screenshots/welcome-screen.png" alt="Welcome Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/home-screen.png" alt="Home Screen" width="45%"/> </div>
 
-### **Create Post and Profile Screen**
+### **Profile Screen and Edit Profile Screen**
 
-<div> <img src="/mobile/assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> </div>
+<div> <img src="/mobile/assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/edit-profile-screen.jpg" alt="Profile Screen" width="45%"/> </div>
+
+### **Create Post**
+
+<div> <img src="/mobile/assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/>
 
 * * * * *
 

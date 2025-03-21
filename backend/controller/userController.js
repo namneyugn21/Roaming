@@ -71,7 +71,8 @@ exports.updateCurrentUser = async (req, res) => {
     const { 
       username,
       name,
-      bio
+      bio,
+      avatar
     } = req.body;
 
     if (!name || !username) {
@@ -83,6 +84,7 @@ exports.updateCurrentUser = async (req, res) => {
       name,
       username,
       bio,
+      avatar
     };
     await db.collection('users').doc(user.uid).update(userData);
 
@@ -121,5 +123,40 @@ exports.getCurrentUserPosts = async (req, res) => {
   } catch (error) {
     console.error("Error fetching user posts:", error);
     res.status(500).json({ error: 'Failed to fetch user posts' });
+  }
+}
+
+// update the user posts
+exports.updateCurrentUserPosts = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { avatar } = req.body; // the new avatar image from the request body
+
+    if (!userId || !avatar) {
+      return res.status(400).json({ error: 'User ID and avatar are required' });
+    }
+
+    // update all the posts
+    const postsSnapshot = await db
+      .collection('posts')
+      .where('uid', '==', userId)
+      .get();
+    
+    if (postsSnapshot.empty) {
+      return res.status(200).json({ message: "No posts found" });
+    } 
+
+    // update all the posts
+    const batch = db.batch();
+    postsSnapshot.docs.forEach((doc) => {
+      batch.update(doc.ref, { avatar: avatar });
+    });
+
+    await batch.commit();
+
+    res.status(200).json({ message: "Posts updated" });
+  } catch (error) {
+    console.error("Error updating user posts:", error);
+    res.status(500).json({ error: 'Failed to update user posts' });
   }
 }

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Post } from '@/constants/types';
 import theme from '@/constants/theme';
 import { Timestamp } from 'firebase/firestore';
 import * as Location from "expo-location";
+import { Ionicons } from '@expo/vector-icons';
 
 // this is to ensure that the PostItem component receives the correct props
 interface PostItemProps {
@@ -55,9 +56,11 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post }) => {
       </View>
       <View style={styles.infoContainer}>
         {/* display the name, location, and description */}
-        <View style={{ flexDirection: "row", gap: 5, alignItems: "baseline", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "space-between" }}>
           <Text style={styles.name}>{username}</Text>
-          <Text style={{ color: theme.primary }}>{formattedDate}</Text>
+          <TouchableOpacity>
+            <Ionicons name="ellipsis-horizontal" size={20} color={theme.textColor} />
+          </TouchableOpacity>
         </View>
         {(city && country) && (
           <Text style={styles.location}>
@@ -79,6 +82,7 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post }) => {
             contentContainerStyle={{ gap: 5 }}
           />
         )}
+        <Text style={{ color: theme.primary, paddingTop: 10 }}>{formattedDate}</Text>
       </View>
     </View>
   )

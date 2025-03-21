@@ -46,6 +46,7 @@ export default function ProfileScreen() {
       await AsyncStorage.removeItem("token");
 
       // redirect to the welcome screen
+      console.log("Signed out successfully! Goodbye :)");
       router.replace("/");
     } catch (error) {
       alert("Failed to sign out. Please try again :(");
@@ -59,7 +60,7 @@ export default function ProfileScreen() {
         <View style={styles.subContainer}>
           <Image
             style={styles.avatar}
-            source={{ uri: user?.avatar }}
+            source={{ uri: typeof user?.avatar === "string" ? user.avatar : user?.avatar?.url }}
           />
           <View style={styles.infoContainer}>
             <Text style={styles.username}>{user?.username}</Text>
@@ -83,7 +84,7 @@ export default function ProfileScreen() {
         {/* display the user's poss */}
         {user && posts?.map((post) => (
           <PostItem
-            avatar={post.avatar}
+            avatar={typeof post.avatar === "string" ? post.avatar : post.avatar.url}
             username={post.username}
             post={post}
             key={post.pid}

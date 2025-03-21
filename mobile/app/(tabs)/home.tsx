@@ -52,7 +52,13 @@ export default function HomeScreen() {
       {posts && (
         <Animated.FlatList
           data={posts} // the data={posts} prop passes the posts array as input to renderPost, and each item from the posts array is passed as a parameter to renderPost through item in renderItem.
-          renderItem={({ item }) => <PostItem avatar={item.avatar} username={item.username} post={item} />} // render the post item
+          renderItem={({ item }) => (
+            <PostItem
+              avatar={typeof item.avatar === "string" ? item.avatar : item.avatar.url}
+              username={item.username}
+              post={item}
+            />
+          )} // render the post item
           keyExtractor={(item) => item.pid}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }],

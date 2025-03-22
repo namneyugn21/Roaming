@@ -40,7 +40,8 @@ export default function TabLayout() {
         name="create"
         options={{
           title: "New post",
-          tabBarIcon: ({ color, focused }) => (
+          headerTitleStyle: { color: theme.textColor, fontWeight: "bold" },
+          tabBarIcon: ({ focused }) => (
             <Ionicons
               name={"add-outline"}
               size={30}
@@ -58,7 +59,7 @@ export default function TabLayout() {
           headerLeft: () => (
             router.canGoBack() ? ( // show back button only if there's a previous screen
               <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                <Ionicons name="close-outline" size={35} color="white" />
+                <Ionicons name="close-outline" size={35} color={theme.primary} />
               </TouchableOpacity>
             ) : null
           ),

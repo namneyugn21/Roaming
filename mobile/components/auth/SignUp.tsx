@@ -103,7 +103,7 @@ export default function SignUp({ switchMode }: SignUpProps) {
       </Animated.View>
 
       {/* switch between sign up and sign in */}
-      <TouchableOpacity onPress={switchMode}>
+      <TouchableOpacity onPress={switchMode} activeOpacity={0.9}>
         <Text style={styles.switchText}>
           Already have an account? Sign In
         </Text>
@@ -111,15 +111,15 @@ export default function SignUp({ switchMode }: SignUpProps) {
 
 
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <TouchableOpacity style={styles.navButton} onPress={moveLeft} disabled={steps === 0}>
+        <TouchableOpacity style={styles.navButton} onPress={moveLeft} disabled={steps === 0} activeOpacity={0.9}>
           <Text style={styles.buttonText} >Back</Text>
         </TouchableOpacity>
         {(steps + 1) < totalSteps ? (
-          <TouchableOpacity style={styles.navButton} onPress={moveRight}>
+          <TouchableOpacity style={styles.navButton} onPress={moveRight} activeOpacity={0.9}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.navButton} onPress={() => signUp({ name, username, email, password, bio })}>
+          <TouchableOpacity style={styles.navButton} onPress={() => signUp({ name, username, email, password, bio })} activeOpacity={0.9}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         )}

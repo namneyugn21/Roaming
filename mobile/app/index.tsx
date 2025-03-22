@@ -60,7 +60,11 @@ export default function WelcomeScreen() {
         :
         <>
           {/* sign in button */}
-          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => setModalVisible(true)}
+            activeOpacity={0.9}
+          >
             <Text style={styles.buttonText}>Sign In with Email</Text>
           </TouchableOpacity>
 

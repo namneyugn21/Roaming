@@ -2,20 +2,30 @@ import React, { useEffect } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Post } from '@/constants/types';
 import theme from '@/constants/theme';
-import { Timestamp } from 'firebase/firestore';
 import * as Location from "expo-location";
 import { Ionicons } from '@expo/vector-icons';
+import { fetchCurrentUser } from '@/services/user';
 
 // this is to ensure that the PostItem component receives the correct props
 interface PostItemProps {
   avatar: string;
   username: string;
   post: Post;
+  onEditPress?: (post: Post) => void;
 }
 
-const PostItem: React.FC<PostItemProps> = ({ avatar, username, post }) => {
+const PostItem: React.FC<PostItemProps> = ({ avatar, username, post, onEditPress }) => {
   const [city, setCity] = React.useState<string | null>(null);
   const [country, setCountry] = React.useState<string | null>(null);
+  const [currentUser, setCurrentUser] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const currentUser = await fetchCurrentUser();
+      setCurrentUser(currentUser?.username || null);
+    };
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     if (post.latitude && post.longitude) {
@@ -58,9 +68,11 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post }) => {
         {/* display the name, location, and description */}
         <View style={{ flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "space-between" }}>
           <Text style={styles.name}>{username}</Text>
-          <TouchableOpacity>
-            <Ionicons name="ellipsis-horizontal" size={20} color={theme.textColor} />
-          </TouchableOpacity>
+          {post.username === currentUser && (
+            <TouchableOpacity onPress={() => onEditPress && onEditPress(post)} activeOpacity={0.9}>
+              <Ionicons name="ellipsis-horizontal" size={20} color={theme.textColor} />
+            </TouchableOpacity>
+          )}
         </View>
         {(city && country) && (
           <Text style={styles.location}>

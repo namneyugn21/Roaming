@@ -1,21 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, TouchableOpacity, Animated, StyleSheet, PanResponder,
-  TouchableWithoutFeedback
+  TouchableOpacity, Animated, StyleSheet, PanResponder, TouchableWithoutFeedback, Text, Alert
 } from "react-native";
 import theme from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import SignIn from "@/components/auth/SignIn";
-import SignUp from "@/components/auth/SignUp";
+import { Post } from "@/constants/types";
+import { deletePost } from "@/services/post";
 
-interface AuthModalProps {
+interface EditModalProps {
   visible: boolean;
   onClose: () => void;
-  isSignUp: boolean;
-  switchMode: () => void;
+  post: Post;
+  onUpdate: () => void;
 }
 
-export default function AuthModal({ visible, onClose, isSignUp, switchMode }: AuthModalProps) {
+export default function EditModal({ post, visible, onClose, onUpdate }: EditModalProps) {
   const translateY = useRef(new Animated.Value(800)).current; // start below the screen
   const overlayOpacity = useRef(new Animated.Value(0)).current; // start with no opacity
   const [isVisible, setIsVisible] = useState(visible);
@@ -23,8 +21,10 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
   useEffect(() => {
     if (visible) {
       setIsVisible(true); // show the modal first
+
+      // smoothly animate modal up
       Animated.timing(translateY, {
-        toValue: 50, // move up smoothly
+        toValue: 0, // move up smoothly
         duration: theme.animationDuration,
         useNativeDriver: true,
       }).start();
@@ -67,6 +67,26 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
 
   if (!isVisible) return null;
 
+  // handle delete post
+  const handleDelete = () => {
+    Alert.alert("Delete post", "Are you sure you want to delete this post?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          // delete post
+          const response = await deletePost(post);
+          if (response === 200) onUpdate(); // refresh the post
+          onClose();
+        },
+      },
+    ]);
+  }
+
   return (
     <TouchableWithoutFeedback onPress={onClose}>
       <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
@@ -74,21 +94,9 @@ export default function AuthModal({ visible, onClose, isSignUp, switchMode }: Au
           style={[styles.formContainer, { transform: [{ translateY }] }]}
           {...panResponder.panHandlers}
         >
-          {/* close button */}
-          <TouchableOpacity 
-            style={{ position: "absolute", top: 20, right: 20, zIndex: 1000 }} 
-            onPress={onClose}
-            activeOpacity={0.9}
-          >
-            <Ionicons name="close" size={35} color={theme.primary} />
+          <TouchableOpacity activeOpacity={0.9} style={styles.button} onPress={() => handleDelete()}>
+            <Text style={styles.buttonText}>Delete post</Text> 
           </TouchableOpacity>
-
-          {/* render the sign in or sign up form */}
-          {isSignUp ? (
-            <SignUp switchMode={switchMode} isSignUp={isSignUp} />
-          ) : (
-            <SignIn switchMode={switchMode} isSignUp={isSignUp} />
-          )}
         </Animated.View>
       </Animated.View>
     </TouchableWithoutFeedback>
@@ -99,9 +107,9 @@ const styles = StyleSheet.create({
   overlay: {
     position: "absolute", // ensure it overlays everything
     top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
-    bottom: 0, // covers full screen
     width: "100%",
     backgroundColor: "rgba(0,0,0,0.5)", // dim background
     justifyContent: "flex-end", // push modal to bottom
@@ -110,7 +118,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    height: "90%",
     backgroundColor: theme.background,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
@@ -120,5 +127,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
+  },
+  button: {
+    backgroundColor: theme.accent,
+    borderRadius: 12,
+    fontSize: 18,
+    padding: 15,
+  },
+  buttonText: {
+    color: theme.warning_accent,
+    fontSize: 15,
+    textAlign: "center",
+    fontWeight: "bold",
   }
 });

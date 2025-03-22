@@ -1,15 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRef } from "react";
 import { Text, StyleSheet, SafeAreaView, Animated } from "react-native";
 import { useFocusEffect } from "expo-router";
 
 import theme from "../../constants/theme";
 import { Post, User } from "@/constants/types";
-import PostItem from "@/components/PostItem";
+import PostItem from "@/components/post/PostItem";
 import { fetchAllPosts } from "@/services/post";
+import EditModal from "@/components/post/EditModal";
 
 export default function HomeScreen() {
   const [posts, setPosts] = React.useState<Post[]>([]); // store the posts
+  const [selectedPost, setSelectedPost] = React.useState<Post | null>(null);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [refresh, setRefresh] = React.useState(false);
+
+  // refresh when the user deletes a post 
+  useEffect(() => {
+    if (refresh) {
+      const fetchData = async () => {
+        const postsData = await fetchAllPosts(); // retrieve the posts
+        if (postsData) {
+          setPosts(postsData);
+        }
+      };
+      fetchData();
+      setRefresh(false);
+    }
+  }, [refresh]);
 
   // load the posts when the screen is focused
   useFocusEffect(
@@ -43,32 +61,46 @@ export default function HomeScreen() {
   });
 
   return (
-    <SafeAreaView style={{ backgroundColor: theme.background, flex: 1 }}>
-      {/* animated header */}
-      {/* { height: headerHeight, opacity: headerOpacity } overwrites any conflicting properties. */}
-      <Animated.View style={[styles.header, { height: headerHeight, opacity: headerOpacity }]}>
-        <Text style={styles.title}>Roaming</Text>
-      </Animated.View>
-      {posts && (
-        <Animated.FlatList
-          data={posts} // the data={posts} prop passes the posts array as input to renderPost, and each item from the posts array is passed as a parameter to renderPost through item in renderItem.
-          renderItem={({ item }) => (
-            <PostItem
-              avatar={typeof item.avatar === "string" ? item.avatar : item.avatar.url}
-              username={item.username}
-              post={item}
-            />
-          )} // render the post item
-          keyExtractor={(item) => item.pid}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }],
-            { useNativeDriver: false }
-          )}
-          contentContainerStyle={{ paddingTop: 50 }}
-          showsVerticalScrollIndicator={false}
+    <>
+      <SafeAreaView style={{ backgroundColor: theme.background, flex: 1 }}>
+        {/* animated header */}
+        {/* { height: headerHeight, opacity: headerOpacity } overwrites any conflicting properties. */}
+        <Animated.View style={[styles.header, { height: headerHeight, opacity: headerOpacity }]}>
+          <Text style={styles.title}>Roaming</Text>
+        </Animated.View>
+        {posts && (
+          <Animated.FlatList
+            data={posts} // the data={posts} prop passes the posts array as input to renderPost, and each item from the posts array is passed as a parameter to renderPost through item in renderItem.
+            renderItem={({ item }) => (
+              <PostItem
+                avatar={typeof item.avatar === "string" ? item.avatar : item.avatar.url}
+                username={item.username}
+                post={item}
+                onEditPress={(post) => {
+                  setSelectedPost(post)
+                  setModalVisible(true)
+                }}
+              />
+            )} // render the post item
+            keyExtractor={(item) => item.pid}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }],
+              { useNativeDriver: false }
+            )}
+            contentContainerStyle={{ paddingTop: 50 }}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </SafeAreaView>
+      {selectedPost && (
+        <EditModal 
+          post={selectedPost}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onUpdate={() => setRefresh(true)}
         />
       )}
-    </SafeAreaView>
+    </>
   );
 }
 

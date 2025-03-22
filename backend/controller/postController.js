@@ -54,6 +54,24 @@ exports.createPost = async (req, res) => {
   }
 }
 
+exports.deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    if (!postId) {
+      return res.status(400).json({ error: "Post ID is required" });
+    }
+
+    // delete post from firestore
+    await db.collection("posts").doc(postId).delete();
+
+    res.status(200).json({ message: "Post deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+}
+
 exports.deleteImage = async (req, res) => {
   try {
     const { imageId } = req.params;
@@ -71,4 +89,5 @@ exports.deleteImage = async (req, res) => {
     res.status(500).json({ error: "Failed to delete image" });
   }
 }
+
 

@@ -1,21 +1,41 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableOpacity, Text, Image, View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import theme from "@/constants/theme";
 import { useFocusEffect, useRouter } from "expo-router";
 import { fetchCurrentUser } from "@/services/user";
 import { Post, User } from "@/constants/types";
-import PostItem from "@/components/PostItem";
+import PostItem from "@/components/post/PostItem";
 import { auth } from "@/config/firebase";
 import { fetchUserPosts } from "@/services/post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import EditModal from "@/components/EditModal";
+import EditModal from "@/components/user/EditModal";
+import EditPostModal from "@/components/post/EditModal";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const [user, setUser] = React.useState<User>();
   const [posts, setPosts] = React.useState<Post[]>([]);
+  const [selectedPost, setSelectedPost] = React.useState<Post | null>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [postModalVisible, setPostModalVisible] = React.useState(false);
+  const [refresh, setRefresh] = React.useState(false);
 
+  // refresh when the user deletes a post or updates their profile
+  useEffect(() => {
+    if (refresh) {
+      const fetchData = async () => {
+        if (!user) return;
+
+        const postsData = await fetchUserPosts(user?.uid); // retrieve the posts
+        if (postsData) {
+          setPosts(postsData);
+        }
+      };
+      fetchData();
+      setRefresh(false);
+    }
+  }, [refresh, user]);
+  
   // load the user and posts when the screen is loaded
   useFocusEffect(
     React.useCallback(() => {
@@ -54,54 +74,70 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.name}>{user?.name}</Text>
-        <View style={styles.subContainer}>
-          <Image
-            style={styles.avatar}
-            source={{ uri: typeof user?.avatar === "string" ? user.avatar : user?.avatar?.url }}
-          />
-          <View style={styles.infoContainer}>
-            <Text style={styles.username}>{user?.username}</Text>
-            <Text style={styles.bio}>{user?.bio}</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => setModalVisible(true)}
-              >
-                <Text style={styles.actionButtonText}>Edit profile</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => handleSignOut()}
-              >
-                <Text style={styles.actionButtonText}>Sign out</Text>
-              </TouchableOpacity>
+    <>
+      <SafeAreaView style={styles.container}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.name}>{user?.name}</Text>
+          <View style={styles.subContainer}>
+            <Image
+              style={styles.avatar}
+              source={{ uri: typeof user?.avatar === "string" ? user.avatar : user?.avatar?.url }}
+            />
+            <View style={styles.infoContainer}>
+              <Text style={styles.username}>{user?.username}</Text>
+              <Text style={styles.bio}>{user?.bio}</Text>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  style={styles.actionButton}
+                  onPress={() => setModalVisible(true)}
+                >
+                  <Text style={styles.actionButtonText}>Edit profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  style={styles.actionButton}
+                  onPress={() => handleSignOut()}
+                >
+                  <Text style={styles.actionButtonText}>Sign out</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-        {/* display the user's poss */}
-        {user && posts?.map((post) => (
-          <PostItem
-            avatar={typeof post.avatar === "string" ? post.avatar : post.avatar.url}
-            username={post.username}
-            post={post}
-            key={post.pid}
+          {/* display the user's poss */}
+          {user && posts?.map((post) => (
+            <PostItem
+              avatar={typeof post.avatar === "string" ? post.avatar : post.avatar.url}
+              username={post.username}
+              post={post}
+              key={post.pid}
+              onEditPress={(post) => {
+                setSelectedPost(post)
+                setPostModalVisible(true)
+              }}
+            />
+          ))}
+        </ScrollView>
+        {/* edit Modal */}
+        {user && (
+          <EditModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            user={user}
+            onUpdate={(updatedUser) => setUser(updatedUser)} // update the user in the parent component
           />
-        ))}
-      </ScrollView>
-      {/* auth Modal */}
-      {user && (
-        <EditModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          user={user}
-          onUpdate={(updatedUser) => setUser(updatedUser)} // update the user in the parent component
-        />
-      )}
-    </SafeAreaView>
-    
+        )}
+      </SafeAreaView>
+      {selectedPost &&
+        <EditPostModal
+          post={selectedPost}
+          visible={postModalVisible}
+          onClose={() => setPostModalVisible(false)}
+          onUpdate={() => setRefresh(true)}
+        >
+        </EditPostModal>
+      }
+    </>
   );
 }
 

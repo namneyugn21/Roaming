@@ -256,7 +256,11 @@ export default function CreateScreen() {
                         <Image style={styles.previewImage} source={{ uri: item }} />
 
                         {/* the close button to remove the image */}
-                        <TouchableOpacity onPress={() => handleRemoveImage(item)} style={{ position: "absolute", top: 10, right: 10 }}>
+                        <TouchableOpacity 
+                          onPress={() => handleRemoveImage(item)} 
+                          style={{ position: "absolute", top: 10, right: 10 }}
+                          activeOpacity={0.9}
+                        >
                           <Ionicons name="close-circle" size={30} color={theme.primary}></Ionicons>
                         </TouchableOpacity>
                       </View>
@@ -267,13 +271,13 @@ export default function CreateScreen() {
                 </View>
               )}
               <View style={styles.actions}>
-                <TouchableOpacity onPress={handleImagePicker}>
+                <TouchableOpacity onPress={handleImagePicker} activeOpacity={0.9}>
                   <Ionicons name="images-outline" size={22} color={theme.primary}></Ionicons>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleCamera}>
+                <TouchableOpacity onPress={handleCamera} activeOpacity={0.9}>
                   <Ionicons name="camera-outline" size={26} color={theme.primary}></Ionicons>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleLocation}>
+                <TouchableOpacity onPress={handleLocation} activeOpacity={0.9}>
                   {toggleLocation === true ?
                     <Ionicons name="location-sharp" size={23} color={theme.primary}></Ionicons>
                   : <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>}
@@ -291,6 +295,7 @@ export default function CreateScreen() {
           <TouchableOpacity
             style={[styles.postButton, (image != null) ? styles.postButtonActive : {}]}
             onPress={handlePost}
+            activeOpacity={0.9}
             disabled={image == null}
           >
             <Text style={styles.postButtonText}>Post</Text>

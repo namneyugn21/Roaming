@@ -19,6 +19,7 @@ interface EditModalProps {
 
 export default function EditModal({ visible, onClose, user, onUpdate }: EditModalProps) {
   const translateY = useRef(new Animated.Value(800)).current; // start below the screen
+  const overlayOpacity = useRef(new Animated.Value(0)).current; // start with no opacity
   const [isVisible, setIsVisible] = useState(visible);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -44,16 +45,30 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
       // smoothly animate modal up
       Animated.timing(translateY, {
         toValue: 0, // move up smoothly
-        duration: 300,
+        duration: theme.animationDuration,
+        useNativeDriver: true,
+      }).start();
+
+      // fade in the overlay
+      Animated.timing(overlayOpacity, {
+        toValue: 1, // fade in
+        duration: theme.animationDuration,
         useNativeDriver: true,
       }).start();
     } else {
       // smoothly animate modal down before hiding
       Animated.timing(translateY, {
         toValue: 800, // Move back down
-        duration: 300,
+        duration: theme.animationDuration,
         useNativeDriver: true,
       }).start(() => setIsVisible(false)); // hide modal after animation completes
+
+      // fade out the overlay
+      Animated.timing(overlayOpacity, {
+        toValue: 0, // fade out
+        duration: theme.animationDuration,
+        useNativeDriver: true,
+      }).start();
     }
   }, [visible]);
 
@@ -130,13 +145,17 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
 
   return (
     <TouchableWithoutFeedback onPress={onClose}>
-      <View style={styles.overlay}>
+      <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
         <Animated.View
           style={[styles.formContainer, { transform: [{ translateY }] }]}
           {...panResponder.panHandlers}
         >
           {/* close button */}
-          <TouchableOpacity style={{ position: "absolute", top: 20, right: 20, zIndex: 1000 }} onPress={onClose}>
+          <TouchableOpacity                   
+            activeOpacity={0.9}
+            style={{ position: "absolute", top: 20, right: 20, zIndex: 1000 }} 
+            onPress={onClose}
+          >
             <Ionicons name="close" size={35} color={theme.primary} />
           </TouchableOpacity>
 
@@ -151,7 +170,11 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
               keyboardVerticalOffset={Platform.OS === "ios" ? 110 : 0}
             >
               <ScrollView showsVerticalScrollIndicator={false}>
-                <TouchableOpacity style={styles.avatar} onPress={handleImagePicker}>
+                <TouchableOpacity 
+                  activeOpacity={0.9}
+                  style={styles.avatar}  
+                  onPress={handleImagePicker}
+                >
                   <Image source={{ uri: typeof avatar === "string" ? avatar : avatar.url }} style={styles.avatar} />
                   <Ionicons name="camera" size={15} color={theme.primary} style={styles.editAvatar} />
                 </TouchableOpacity>
@@ -184,6 +207,7 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
                   }}
                 />
                 <TouchableOpacity 
+                  activeOpacity={0.9}
                   style={{ backgroundColor: theme.accent, padding: 15, borderRadius: 10, opacity: isEditing ? 1 : 0.5 }} 
                   onPress={() => handleSave() }
                   disabled={!isEditing}
@@ -194,7 +218,7 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
             </KeyboardAvoidingView>
           </View>
         </Animated.View>
-      </View>
+      </Animated.View>
     </TouchableWithoutFeedback>
   );
 }

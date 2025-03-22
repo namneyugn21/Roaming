@@ -103,3 +103,23 @@ export const createPost = async ({ uid, image, description, latitude, longitude,
     console.log("Error creating post:", error);
   }
 };
+
+export const deletePost = async (post: Post) => {
+  // first we will delete all the image on cloudinary
+  try {
+    for (const img of post.image) {
+      await api.delete(`/posts/images/${img.public_id}`);
+    }
+  } catch (error) {
+    console.log("Error deleting images on Cloudinary:", error);
+  }
+
+  // then we will delete the post from the database
+  try {
+    let response = await api.delete(`/posts/${post.pid}`) ;
+    console.log(`Post ${post.pid} deleted successfully!`);
+    return response.status;
+  } catch (error) {
+    console.log("Error deleting post:", error);
+  }
+}

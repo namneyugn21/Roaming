@@ -54,18 +54,18 @@ export default function SignIn({ switchMode }: SignInProps) {
 
       {/* display error message */}
       {error ?         
-        <Text style={{ color: "#FF6B6B", marginTop: -5, marginBottom: 15, marginLeft: 5 }}>{error}</Text>
+        <Text style={{ color: theme.warning_background, marginTop: -5, marginBottom: 15, marginLeft: 5 }}>{error}</Text>
         : null
       }
     
       {/* switch between sign up and sign in */}
-      <TouchableOpacity onPress={switchMode}>
+      <TouchableOpacity onPress={switchMode} activeOpacity={0.9}>
         <Text style={styles.switchText}>
           Don't have an account? Sign Up
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
+      <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={() => handleSignIn()}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
     </View>

@@ -52,6 +52,11 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 -   Supports **capturing images** via the device camera.
 -   Users **grant permissions** for location, camera, and photo library access via the Expo API.
 
+#### **Delete a Post**
+
+-   Allows users to delete their posts.
+-   The deletion will delete the post entry on Firebase, as well as delete the photo(s) saved on Cloudinary.
+
 #### **Edit User Profile**
 
 -   Users can update their username, display name, bio, and avatar.
@@ -63,7 +68,7 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 ### **Backend Features (New Integration)**
 
 -   **User Management API** - Handles **user authentication, registration, and profile updates**.
--   **Post Upload API** - Manages **photo uploads, captions, and geolocation**.
+-   **Post Upload API** - Manages **photo uploads, deletions, captions, and geolocation**.
 -   **Cloudinary Integration** - Stores and serves **optimized media files** via a fast CDN.
 -   **Basic REST API** - Built with **Node.js & Express**, enabling CRUD operations for user posts.
 -   **Data Validation & Security** - Implements **middleware** for data validation and authentication.

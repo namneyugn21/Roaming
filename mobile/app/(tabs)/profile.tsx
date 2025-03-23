@@ -54,6 +54,8 @@ export default function ProfileScreen() {
         }
       };
       fetchData();
+      setPostModalVisible(false);
+      setModalVisible(false);
     }, [])
   );
 
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
   bio: {
     fontSize: 15,
     color: theme.textColor,
-    marginTop: 10,
+    marginTop: 5,
     lineHeight: 20,
   },
   actionButton: {

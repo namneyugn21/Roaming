@@ -4,7 +4,7 @@ const theme = {
   primary: "#8d9076",
   secondary: "#eeebbb",
   warning_background: "#be3c3c",
-  warning_accent: "#7a1f1f",
+  warning_primary: "#c81e1e",
   accent: "#5b604d",
   titleFont: "Monomakh",
   animationDuration: 200,

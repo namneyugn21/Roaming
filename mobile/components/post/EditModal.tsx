@@ -129,13 +129,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   button: {
-    backgroundColor: theme.accent,
+    backgroundColor: theme.primary,
     borderRadius: 12,
     fontSize: 18,
     padding: 15,
   },
   buttonText: {
-    color: theme.warning_accent,
+    color: theme.warning_primary,
     fontSize: 15,
     textAlign: "center",
     fontWeight: "bold",

@@ -39,6 +39,7 @@ export default function HomeScreen() {
         }
       };
       fetchData();
+      setModalVisible(false);
     }, [])
   );
 

@@ -77,9 +77,22 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
+
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dy > 0) {
+          translateY.setValue(gestureState.dy);
+        }
+      },
+
       onPanResponderRelease: (_, gestureState) => {
         if (gestureState.dy > 150) { // improved sensitivity for swipe
           onClose();
+        } else {
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: theme.animationDuration,
+            useNativeDriver: true,
+          }).start();
         }
       },
     })

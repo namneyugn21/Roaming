@@ -4,6 +4,7 @@ import { UploadApiResponse } from "cloudinary-react-native/lib/typescript/src/ap
 import { upload } from "cloudinary-react-native"
 import { cld } from "@/config/cloudinary"
 
+// fetch all posts of a user from the API
 export const fetchUserPosts = async (userId: string): Promise<Post []> => {
   try {
     let response = await api.get(`/users/${userId}/posts`);
@@ -20,6 +21,7 @@ export const fetchUserPosts = async (userId: string): Promise<Post []> => {
   }
 }
 
+// fetch all posts from the API
 export const fetchAllPosts = async (): Promise<Post []> => {
   try {
     let response = await api.get("/posts");
@@ -36,6 +38,7 @@ export const fetchAllPosts = async (): Promise<Post []> => {
   }
 }
 
+// create a new post
 interface PostData {
   uid: string;
   image: string[];
@@ -45,7 +48,6 @@ interface PostData {
   username: string;
   avatar: string;
 }
-
 const uploadImage = async (image: string) => {
   // check if there's an image to upload
   if (!image) {
@@ -74,7 +76,6 @@ const uploadImage = async (image: string) => {
     })
   })
 }
-
 export const createPost = async ({ uid, image, description, latitude, longitude, username, avatar }: PostData) => {
   // upload the image to the cloud storage
   const cloudImage = [];
@@ -104,6 +105,7 @@ export const createPost = async ({ uid, image, description, latitude, longitude,
   }
 };
 
+// delete a post
 export const deletePost = async (post: Post) => {
   // first we will delete all the image on cloudinary
   try {

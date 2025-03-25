@@ -9,6 +9,7 @@ import theme from "../../constants/theme";
 import { User } from "@/constants/types";
 import { fetchCurrentUser } from "@/services/user";
 import { createPost } from "@/services/post";
+import LocationModal from "@/components/post/LocationModal";
 
 const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
 
@@ -105,7 +106,7 @@ export default function CreateScreen() {
       aspect: [4, 5],
       allowsMultipleSelection: true,
       selectionLimit: 10,
-      quality: 0.5,
+      quality: 0,
       orderedSelection: true,
     });
 
@@ -134,37 +135,26 @@ export default function CreateScreen() {
 
   {/* handle the location */ }
   const handleLocation = async () => {
-    if (toggleLocation) {
-      setCity(null);
-      setCountry(null);
-      setLatitude(null);
-      setLongitude(null);
-      setToggleLocation(false);
-      return;
-    } else {
-      setToggleLocation(true);
-      const hasPermission = await requestPermission("location");
-      if (!hasPermission) {
-        Alert.alert("Permission Required", "Allow the app to access the location to get your current location!");
-        return
-      }
-
-      // get the location object
-      let location = await Location.getCurrentPositionAsync({});
-      if (location) {
-        const { coords } = location;
-        const { latitude, longitude } = coords;
-        setLatitude(latitude.toString());
-        setLongitude(longitude.toString());
-
-        // get the city and country names from the latitude and longitude
-        let address = await Location.reverseGeocodeAsync({ latitude, longitude });
-        if (address.length > 0) {
-          setCity(address[0].city);
-          setCountry(address[0].country);
-        }
-      }
-    }
+    setToggleLocation(true);
+  }
+  
+  const promptLocation = async () => {
+    Alert.alert("Remove location", "Do you want to remove the location?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: () => {
+          setCity(null);
+          setCountry(null);
+          setLatitude(null);
+          setLongitude(null);
+        },
+      },
+    ]);
   }
 
   {/* open the camera */ }
@@ -184,7 +174,7 @@ export default function CreateScreen() {
     let photo = await ImagePicker.launchCameraAsync({
       mediaTypes: "images",
       aspect: [4, 5],
-      quality: 1,
+      quality: 0,
     });
 
     if (!photo.canceled) {
@@ -219,7 +209,7 @@ export default function CreateScreen() {
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
-        <ScrollView keyboardShouldPersistTaps="always">
+        <ScrollView>
           {/* top screen component */}
           <View style={styles.topContainer}>
             <View style={styles.avatarContainer}>
@@ -231,7 +221,9 @@ export default function CreateScreen() {
             <View style={styles.infoContainer}>
               <Text style={styles.name}>{user?.username}</Text>
               {(city && country) && (
-                <Text style={styles.location}>{city}, {country}</Text>
+                <TouchableOpacity onPress={() => promptLocation()} activeOpacity={0.9}>
+                  <Text style={styles.location}>{city}, {country}</Text>
+                </TouchableOpacity>
               )}
               <TextInput
                 ref={captionInputRef}
@@ -278,9 +270,7 @@ export default function CreateScreen() {
                   <Ionicons name="camera-outline" size={26} color={theme.primary}></Ionicons>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleLocation} activeOpacity={0.9}>
-                  {toggleLocation === true ?
-                    <Ionicons name="location-sharp" size={23} color={theme.primary}></Ionicons>
-                  : <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>}
+                  <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>
                 </TouchableOpacity>
               </View>
             </View>
@@ -301,6 +291,7 @@ export default function CreateScreen() {
             <Text style={styles.postButtonText}>Post</Text>
           </TouchableOpacity>
         </View>
+        <LocationModal visible={toggleLocation} onClose={() => setToggleLocation(false)} onLocationSelect={(latitude, longitude, city, country) => { setLatitude(latitude); setLongitude(longitude); setCity(city); setCountry(country); }} />
       </KeyboardAvoidingView>
     </View>
   );

@@ -28,7 +28,7 @@ exports.getAllPosts = async (req, res) => {
 
 exports.createPost = async (req, res) => {
   try {
-    const { uid, image, description, latitude, longitude, username, avatar } = req.body;
+    const { uid, image, description, latitude, longitude, username, avatar, location } = req.body;
 
     if (!uid || !username || !avatar || !image.length) {
       return res.status(400).json({ error: "All fields are required" });
@@ -43,6 +43,7 @@ exports.createPost = async (req, res) => {
       username,
       avatar,
       createdAt: FieldValue.serverTimestamp(),
+      location
     };
 
     const postRef = await db.collection("posts").add(newPost);

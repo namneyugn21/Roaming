@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -57,10 +57,9 @@ export default function CreateScreen() {
 
   // Location state
   const [toggleLocation, setToggleLocation] = React.useState<boolean>(false); // toggle the location
-  const [city, setCity] = React.useState<string | null>(null); // store the city name
-  const [country, setCountry] = React.useState<string | null>(null); // store the country name
   const [latitude, setLatitude] = React.useState<string | null>(null); // store the latitude
   const [longitude, setLongitude] = React.useState<string | null>(null); // store the longitude
+  const [location, setLocation] = React.useState<string | null>(null); // store the location
 
   const handlePost = async () => {
     // retrieve user information 
@@ -80,6 +79,7 @@ export default function CreateScreen() {
         longitude: longitude || "",
         username: user.username,
         avatar: typeof user.avatar === "string" ? user.avatar : user.avatar.url,
+        location: location || "",
       });
       router.replace("/(tabs)/home"); // navigate to the Home screen
     } catch (error) {
@@ -148,10 +148,9 @@ export default function CreateScreen() {
         text: "Remove",
         style: "destructive",
         onPress: () => {
-          setCity(null);
-          setCountry(null);
           setLatitude(null);
           setLongitude(null);
+          setLocation(null);
         },
       },
     ]);
@@ -196,8 +195,9 @@ export default function CreateScreen() {
       return () => {
         setCaption("");
         setImage(null);
-        setCity(null);
-        setCountry(null);
+        setLatitude(null);
+        setLongitude(null);
+        setLocation(null);
       };
     }, [])
   );
@@ -220,9 +220,9 @@ export default function CreateScreen() {
             </View>
             <View style={styles.infoContainer}>
               <Text style={styles.name}>{user?.username}</Text>
-              {(city && country) && (
+              {(location) && (
                 <TouchableOpacity onPress={() => promptLocation()} activeOpacity={0.9}>
-                  <Text style={styles.location}>{city}, {country}</Text>
+                  <Text numberOfLines={1} style={styles.location}>{location}</Text>
                 </TouchableOpacity>
               )}
               <TextInput
@@ -291,7 +291,7 @@ export default function CreateScreen() {
             <Text style={styles.postButtonText}>Post</Text>
           </TouchableOpacity>
         </View>
-        <LocationModal visible={toggleLocation} onClose={() => setToggleLocation(false)} onLocationSelect={(latitude, longitude, city, country) => { setLatitude(latitude); setLongitude(longitude); setCity(city); setCountry(country); }} />
+        <LocationModal visible={toggleLocation} onClose={() => setToggleLocation(false)} onLocationSelect={(latitude, longitude, location) => { setLatitude(latitude); setLongitude(longitude); setLocation(location) }} />
       </KeyboardAvoidingView>
     </View>
   );

@@ -43,6 +43,7 @@ export default {
       "FIREBASE_MESSAGING_SENDER_ID": process.env.FIREBASE_MESSAGING_SENDER_ID,
       "FIREBASE_APP_ID": process.env.FIREBASE_APP_ID,
       "CLOUDINARY_CLOUD_NAME": process.env.CLOUDINARY_CLOUD_NAME,
+      "GEOAPIFY_API_KEY": process.env.GEOAPIFY_API_KEY,
       "LOCAL_API_URL": process.env.LOCAL_API_URL
     }
   }

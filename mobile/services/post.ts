@@ -47,6 +47,7 @@ interface PostData {
   longitude: string;
   username: string;
   avatar: string;
+  location: string;
 }
 const uploadImage = async (image: string) => {
   // check if there's an image to upload
@@ -76,7 +77,7 @@ const uploadImage = async (image: string) => {
     })
   })
 }
-export const createPost = async ({ uid, image, description, latitude, longitude, username, avatar }: PostData) => {
+export const createPost = async ({ uid, image, description, latitude, longitude, username, avatar, location }: PostData) => {
   // upload the image to the cloud storage
   const cloudImage = [];
   for (const img of image) {
@@ -96,8 +97,9 @@ export const createPost = async ({ uid, image, description, latitude, longitude,
       longitude,
       username,
       avatar,
+      location,
     });
-
+    console.log(location);
     console.log(`Post ${response.data.pid} created successfully!`);
     return response.data; // Return API response
   } catch (error) {

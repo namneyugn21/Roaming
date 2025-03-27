@@ -1,28 +1,58 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Animated, TextInput, PanResponder, Alert } from "react-native";
+import { Modal, View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Animated, TextInput, PanResponder, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import theme from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import Constants from 'expo-constants';
+
+const GEOAPIFY_API_KEY = Constants.expoConfig?.extra?.GEOAPIFY_API_KEY;
 
 interface LocationModalProps {
   visible: boolean;
   onClose: () => void;
-  onLocationSelect: (latitude: string, longitude: string, city: string, country: string) => void;
+  onLocationSelect: (latitude: string, longitude: string, location: string) => void;
 }
 export default function LocationModal({ visible, onClose, onLocationSelect}: LocationModalProps) {
   // modal visibility state
   const [isVisible, setIsVisible] = useState(visible);
 
-  // location state: long and lat is pass back to send to the database, while city and country is for display
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
+  // location search state
+  const [query, setQuery] = useState("");
+  interface LocationFeature {
+    properties: {
+      formatted: string; // e.g. "New York, USA"
+      lat: number; 
+      lon: number;
+      city?: string;
+      country?: string;
+    };
+  }
+  
+  const [result, setResult] = useState<LocationFeature[]>([]);
 
   // animation values
   const overlayOpacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(800)).current;
 
+  // query useEffect
+  useEffect(() => {
+    if (query.length >= 2) {
+      const fetchLocations = async () => {
+        try {
+          const response = await fetch(
+            `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(query)}&apiKey=${GEOAPIFY_API_KEY}`
+          ); // we use encodeURIComponent to encode the query string to be URL safe (e.g. replace spaces with %20)
+          const data = await response.json();
+          setResult(data.features);
+        } catch (error) {
+          console.log("Error fetching location search:", error);
+        }
+      };
+      fetchLocations();
+    }
+  }, [query]);
+
+  // animation effect
   useEffect(() => {
     if (visible) {
       setIsVisible(true); // show the modal first
@@ -54,33 +84,12 @@ export default function LocationModal({ visible, onClose, onLocationSelect}: Loc
         duration: theme.animationDuration,
         useNativeDriver: true,
       }).start(() => setIsVisible(false));
+
+      // reset the query
+      setQuery("");
+      setResult([]);
     }
   }, [visible]);
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dy > 0) {
-          translateY.setValue(gestureState.dy);
-        }
-      },
-
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dy > 150) { // improved sensitivity for swipe
-          onClose();
-        } else {
-          Animated.timing(translateY, {
-            toValue: 0,
-            duration: theme.animationDuration,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    })
-  ).current;
 
   if (!isVisible) return null;
 
@@ -97,7 +106,6 @@ export default function LocationModal({ visible, onClose, onLocationSelect}: Loc
       console.log("Error getting location permission:", error);
     }
   };
-
   const getCurrentLocation = async () => {
     try {
       // ask for location permission
@@ -109,22 +117,21 @@ export default function LocationModal({ visible, onClose, onLocationSelect}: Loc
 
       // get the location object
       let location = await Location.getCurrentPositionAsync({});
-      if (location) {
-        const { coords } = location;
-        const { latitude, longitude } = coords;
-        setLatitude(latitude.toString());
-        setLongitude(longitude.toString());
+      if (!location) return;
 
-        // get the city and country names from the latitude and longitude
-        let address = await Location.reverseGeocodeAsync({ latitude, longitude });
-        if (address.length > 0) {
-          setCity(address[0].city || "");
-          setCountry(address[0].country || "");
-        }
-      };
+      const { coords } = location;
+      const { latitude, longitude } = coords;
+
+      // get the city and country names from the latitude and longitude
+      let address = await Location.reverseGeocodeAsync({ latitude, longitude });
+      const city = address[0].city || address[0].name || "";
+      const country = address[0].country || "";
+
+      // create a location string
+      const locationString = city + ", " + country;
 
       // close the modal and pass the location data
-      onLocationSelect(latitude, longitude, city, country);
+      onLocationSelect(latitude.toString(), longitude.toString(), locationString);
       onClose();
     } catch (error) {
       console.log("Error getting current location:", error);
@@ -137,11 +144,10 @@ export default function LocationModal({ visible, onClose, onLocationSelect}: Loc
       transparent={true}
       visible={isVisible}
     >
-      <TouchableWithoutFeedback onPress={onClose}>
+      <TouchableWithoutFeedback>
         <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
           <Animated.View 
             style={[styles.modal, { transform: [{ translateY }] }]}
-            {...panResponder.panHandlers}
           >
             {/* close button */}
             <TouchableOpacity                   
@@ -162,12 +168,47 @@ export default function LocationModal({ visible, onClose, onLocationSelect}: Loc
                 style={styles.input}
                 autoFocus={true}
                 placeholderTextColor={theme.textColor}
+                value={query}
+                onChangeText={setQuery}
               />
             </View>
-            <TouchableOpacity style={styles.currentLocation} activeOpacity={0.9} onPress={() => getCurrentLocation()}>
-              <Ionicons name="navigate" size={20} color={theme.textColor} />
-              <Text style={styles.currentLocationText}>Get my current location</Text>
-            </TouchableOpacity>
+
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1 }}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+            >
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="always"
+              >
+                {/* current location */}
+                <TouchableOpacity style={styles.currentLocation} activeOpacity={0.9} onPress={() => getCurrentLocation()}>
+                  <Ionicons name="navigate" size={20} color={theme.textColor} />
+                  <Text style={styles.currentLocationText}>Get my current location</Text>
+                </TouchableOpacity>
+                
+                {/* search results */}
+                {result.map((location, index) => (
+                  <TouchableOpacity 
+                    key={index} 
+                    style={styles.queryResult} 
+                    activeOpacity={0.9} 
+                    onPress={() => {
+                      onLocationSelect(
+                        location.properties.lat.toString(), 
+                        location.properties.lon.toString(), 
+                        location.properties.formatted.split(',')[0]
+                      );
+                      onClose();
+                    }}
+                  >
+                    <Text style={styles.queryText}>{location.properties.formatted.split(',')[0]}</Text>
+                    <Text numberOfLines={1} style={styles.querySubtext}>{location.properties.formatted.split(', ').slice(1).join(', ')}</Text>              
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </KeyboardAvoidingView>
           </Animated.View>
         </Animated.View>
       </TouchableWithoutFeedback>
@@ -226,5 +267,18 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: theme.textColor,
     fontSize: 15,
+  }, 
+  queryResult: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    gap: 5,
+  },
+  queryText: {
+    color: theme.textColor,
+    fontSize: 15,
+  },
+  querySubtext: {
+    color: theme.primary,
+    fontSize: 13,
   }
 });

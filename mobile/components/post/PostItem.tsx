@@ -5,6 +5,9 @@ import theme from '@/constants/theme';
 import * as Location from "expo-location";
 import { Ionicons } from '@expo/vector-icons';
 import { fetchCurrentUser } from '@/services/user';
+import Constants from 'expo-constants';
+
+const GEOAPIFY_API_KEY = Constants.expoConfig?.extra?.GEOAPIFY_API_KEY;
 
 // this is to ensure that the PostItem component receives the correct props
 interface PostItemProps {
@@ -15,8 +18,6 @@ interface PostItemProps {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ avatar, username, post, onEditPress }) => {
-  const [city, setCity] = React.useState<string | null>(null);
-  const [country, setCountry] = React.useState<string | null>(null);
   const [currentUser, setCurrentUser] = React.useState<string | null>(null);
 
   useEffect(() => {
@@ -26,12 +27,6 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post, onEditPress
     };
     fetchUser();
   }, []);
-
-  useEffect(() => {
-    if (post.latitude && post.longitude) {
-      handleLocation(post.latitude, post.longitude);
-    }
-  }, [post.latitude, post.longitude]);
   
   const formattedDate = post.createdAt
   ? new Date(post.createdAt._seconds * 1000).toLocaleDateString("en-US", {
@@ -40,23 +35,6 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post, onEditPress
       day: "numeric",
     })
   : "Unknown Date"; // Fallback if missing
-
-
-  async function handleLocation(latitude: string, longitude: string) {
-    try {
-      const location = await Location.reverseGeocodeAsync({
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
-      });
-
-      if (location && location.length > 0) {
-        setCity(location[0].city);
-        setCountry(location[0].country);
-      }
-    } catch (error) {
-      console.log("Error fetching location:", error);
-    }
-  }
 
   return (
     <View style={styles.post}>
@@ -74,9 +52,9 @@ const PostItem: React.FC<PostItemProps> = ({ avatar, username, post, onEditPress
             </TouchableOpacity>
           )}
         </View>
-        {(city && country) && (
+        {(post.location) && (
           <Text style={styles.location}>
-            {city}, {country}
+            {post.location}
           </Text> 
         )}
         {post.description && (

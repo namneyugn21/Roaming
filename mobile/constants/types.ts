@@ -18,4 +18,5 @@ export interface Post {
   createdAt: any; // timestamp
   username: string; // username
   avatar: string | {url: string, public_id: string}; // user avatar
+  location: string | null;
 }

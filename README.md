@@ -7,6 +7,19 @@ Whether it's a **bustling city skyline, a quiet morning in nature, or a unique a
 
 With **no likes, no follower counts, and no pressure**, Roaming is an invitation to **slow down** and appreciate the **beauty in everyday life---one photo at a time**.
 
+### Table of Contents
+
+- [Technologies Used](#technologies-used)
+- [Current Features](#current-features)
+  - [Frontend Features](#frontend-features)
+  - [Backend Features (New Integration)](#backend-features-new-integration)
+- [Planned Future Enhancements](#planned-future-enhancements)
+- [Setting Up the Project](#setting-up-the-project)
+- [Screenshots](#screenshots)
+- [API Endpoints (Backend)](#api-endpoints-backend)
+- [License](#license)
+- [Contact](#contact)
+
 * * * * *
 
 **Technologies Used**
@@ -168,5 +181,5 @@ This project is licensed under the **MIT License**.
 **Contact**
 -----------
 
-📧 **Email**: vhn1@sfu.ca\
-🌐 **Portfolio**: [Nam Nguyen's Porfolio](https://namneyugn21.github.io)
+**Email**: vhn1@sfu.ca\
+**Portfolio**: [Nam Nguyen's Porfolio](https://namneyugn21.github.io)

@@ -123,17 +123,18 @@ This starts the **Express server** on `http://localhost:3000`.
 **Screenshots**
 ---------------
 
-### **Welcome and Home Screen**
+### Welcome & Home Screen
+<div align="center"> <img src="/mobile/assets/images/screenshots/welcome-screen.png" alt="Welcome Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/home-screen.png" alt="Home Screen" width="45%"/> </div>
 
-<div> <img src="/mobile/assets/images/screenshots/welcome-screen.png" alt="Welcome Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/home-screen.png" alt="Home Screen" width="45%"/> </div>
+### Profile & Edit Profile Screen
+<div align="center"> <img src="/mobile/assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/edit-profile-screen.jpg" alt="Edit Profile Screen" width="45%"/> </div>
 
-### **Profile Screen and Edit Profile Screen**
+### Create Post
+<div align="center"> <img src="/mobile/assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/> </div>
 
-<div> <img src="/mobile/assets/images/screenshots/profile-screen.png" alt="Profile Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/edit-profile-screen.jpg" alt="Profile Screen" width="45%"/> </div>
+### Map View
+<div align="center"> <img src="/mobile/assets/images/screenshots/map-screen.png" alt="Map Screen" width="45%"/> </div>
 
-### **Create Post**
-
-<div> <img src="/mobile/assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/>
 
 * * * * *
 

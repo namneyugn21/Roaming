@@ -35,6 +35,20 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* Search */}
+      <Tabs.Screen
+        name="search"
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "search" : "search-outline"}
+              size={28}
+              color={color}
+            />
+          ),
+        }}
+      />
       {/* Create Post */}
       <Tabs.Screen
         name="create"
@@ -62,6 +76,20 @@ export default function TabLayout() {
                 <Ionicons name="close-outline" size={35} color={theme.primary} />
               </TouchableOpacity>
             ) : null
+          ),
+        }}
+      />
+      {/* Map Screen */}
+      <Tabs.Screen
+        name="map"
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "map" : "map-outline"}
+              size={28}
+              color={color}
+            />
           ),
         }}
       />

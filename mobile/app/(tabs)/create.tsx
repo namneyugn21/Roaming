@@ -272,6 +272,9 @@ export default function CreateScreen() {
                 <TouchableOpacity onPress={handleLocation} activeOpacity={0.9}>
                   <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => {}}>
+                  <Ionicons name="sparkles-outline" size={22} color={theme.primary}></Ionicons>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

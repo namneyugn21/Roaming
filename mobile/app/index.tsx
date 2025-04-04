@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { View, Image, Text, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import theme from "../constants/theme";
-import { User } from "firebase/auth";
-import { getDoc, doc } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthModal from "../components/auth/AuthModal";
 import { api } from "@/services/api";

@@ -12,7 +12,7 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 - [Technologies Used](#technologies-used)
 - [Current Features](#current-features)
   - [Frontend Features](#frontend-features)
-  - [Backend Features (New Integration)](#backend-features-new-integration)
+  - [Backend Features](#backend-features)
 - [Planned Future Enhancements](#planned-future-enhancements)
 - [Setting Up the Project](#setting-up-the-project)
 - [Screenshots](#screenshots)
@@ -82,7 +82,7 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 
 * * * * *
 
-### **Backend Features (New Integration)**
+### **Backend Features**
 
 -   **User Management API** - Handles **user authentication, registration, and profile updates**.
 -   **Post Upload API** - Manages **photo uploads, deletions, captions, and geolocation**.
@@ -95,7 +95,7 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 **Planned Future Enhancements**
 -------------------------------
 
--   **Location Mapping** -- Pin visited places on an interactive map.
+-   **AI Integration** -- Integrate Gemini AI for AI generated caption and chatbot.
 -   **Multi-language Support** -- Expand accessibility for a global audience.
 
 * * * * *

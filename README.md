@@ -17,6 +17,7 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 -   **React Native** - A framework for building cross-platform mobile applications for iOS and Android using JavaScript and React.
 -   **Expo** - A framework and platform built on top of React Native that simplifies development by providing pre-configured tools, libraries, and a managed workflow.
 -   **Firebase** - Provides authentication for user sign-in and Firestore Database for real-time data storage and syncing.
+-   **MapLibre**- Provides an interactive map view that pinpoint the user location and their geotagged posts.
 
 ### **Backend**
 
@@ -62,6 +63,9 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 -   Users can update their username, display name, bio, and avatar.
 -   Any changes to the profile will automatically reflect on their posts (if applicable).
 -   When updating the avatar, the system will efficiently manage storage by deleting the old avatar from Cloudinary, ensuring optimal space usage.
+
+#### **Map View**
+-  Allows user to interact with the map and see their geotagged posts pinpoint.
 
 * * * * *
 

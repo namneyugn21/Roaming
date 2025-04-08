@@ -44,8 +44,6 @@ export default function MapScreen() {
       const { latitude, longitude } = coords;
 
       setLocation({ lat: latitude.toString(), lng: longitude.toString() });
-      console.log("Latitude:", latitude);
-      console.log("Longitude:", longitude);
     } catch (error) {
       console.log("Error getting current location:", error);
     }

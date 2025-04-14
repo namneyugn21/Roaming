@@ -9,7 +9,7 @@ import { auth } from "@/config/firebase";
 import { fetchUserPosts } from "@/services/post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EditModal from "@/components/user/EditModal";
-import EditPostModal from "@/components/post/EditModal";
+import EditPostModal from "@/components/post/ActionModal";
 
 export default function ProfileScreen() {
   const router = useRouter();

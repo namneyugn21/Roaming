@@ -7,7 +7,7 @@ import theme from "../../constants/theme";
 import { Post, User } from "@/constants/types";
 import PostItem from "@/components/post/PostItem";
 import { fetchAllPosts } from "@/services/post";
-import EditModal from "@/components/post/EditModal";
+import EditModal from "@/components/post/ActionModal";
 
 export default function HomeScreen() {
   const [posts, setPosts] = React.useState<Post[]>([]); // store the posts

@@ -2,15 +2,17 @@ import React, { useEffect, useRef } from "react";
 import WebView from "react-native-webview";
 import Constants from "expo-constants";
 import theme from "@/constants/theme";
+import { Post } from "@/constants/types";
 
 const GEOAPIFY_API_KEY = Constants.expoConfig?.extra?.GEOAPIFY_API_KEY;
 
 interface LocationProps {
   latitude: string;
   longitude: string;
-  postLocations: { lat: string; lng: string }[];
+  posts: Post[];
+  postClicked?: (pid: string) => void;
 }
-export default function MapView({ latitude, longitude, postLocations }: LocationProps) {
+export default function MapView({ latitude, longitude, posts, postClicked }: LocationProps) {
   const webviewRef = useRef<WebView>(null);
 
   const htmlContent = `
@@ -68,14 +70,41 @@ export default function MapView({ latitude, longitude, postLocations }: Location
             window.setCoordinates(${latitude}, ${longitude});
           };
 
-          window.setPostMarkers = function(postLocations) {
+          window.setPostMarkers = function(posts) {
             // remove all existing post markers
             postMarkers.forEach(marker => marker.remove());
             postMarkers = [];
 
-            postLocations.forEach(location => {
-              const coords = [location.lng, location.lat];
-              const pin = new maplibregl.Marker({ color: postMarker })
+            posts.forEach(post => {
+              const coords = [post.lng, post.lat];
+
+              // create a marker for each post
+              const pinElement = document.createElement('div');
+              pinElement.style.width = "50px";
+              pinElement.style.height = "50px";
+              pinElement.style.borderRadius = "50%";
+              pinElement.style.overflow = "hidden";
+              pinElement.style.boxShadow = "0 0 6px rgba(0, 0, 0, 0.3)";
+              pinElement.style.border = "2px solid white";
+
+              // add the post image inside
+              const img = document.createElement("img");
+              img.src = post.imageUrl; // you'll need this value in postLocations!
+              img.style.width = "100%";
+              img.style.height = "100%";
+              img.style.objectFit = "cover";
+              pinElement.appendChild(img);
+
+              // add a click event to the pin to return post id clicked
+              pinElement.addEventListener("click", () => {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ 
+                  type: "postClicked",
+                  pid: post.pid 
+                }));
+              });
+
+              // create a marker for each post
+              const pin = new maplibregl.Marker(pinElement)
                 .setLngLat(coords)
                 .addTo(map);
               postMarkers.push(pin);
@@ -88,15 +117,24 @@ export default function MapView({ latitude, longitude, postLocations }: Location
 
   // inject the coordinates into the webview when it loads
   useEffect(() => {
-    if (webviewRef.current && postLocations.length > 0) {
-      const postData = JSON.stringify(postLocations);
+    if (webviewRef.current && posts.length > 0) {
+      const postData = JSON.stringify(
+        posts
+          .filter(post => post.latitude && post.longitude && post.image.length > 0)
+          .map(post => ({
+            lat: parseFloat(post.latitude!),
+            lng: parseFloat(post.longitude!),
+            imageUrl: post.image[0].url,
+            pid: post.pid,
+          }))
+      );
       const script = `
         window.setPostMarkers(${postData});
         true;
       `;
       webviewRef.current.injectJavaScript(script);
     }
-  }, [postLocations]);
+  }, [posts]);
   
   return (
     <WebView
@@ -106,13 +144,28 @@ export default function MapView({ latitude, longitude, postLocations }: Location
       javaScriptEnabled={true}
       // re-inject the coordinates when a post is added or removed
       onLoadEnd={() => {
-        if (postLocations.length > 0) {
-          const postData = JSON.stringify(postLocations);
+        if (posts.length > 0) {
+          const postData = JSON.stringify(
+            posts
+              .filter(post => post.latitude && post.longitude && post.image.length > 0)
+              .map(post => ({
+                lat: parseFloat(post.latitude!),
+                lng: parseFloat(post.longitude!),
+                imageUrl: post.image?.[0]?.url ?? "",
+                pid: post.pid,
+              }))
+          );          
           const script = `
             window.setPostMarkers(${postData});
             true;
           `;
           webviewRef.current?.injectJavaScript(script);
+        }
+      }}
+      onMessage={(event) => {
+        const data = JSON.parse(event.nativeEvent.data);
+        if (data.type === "postClicked") {
+          postClicked?.(data.pid);
         }
       }}
       style={{ flex: 1 }}

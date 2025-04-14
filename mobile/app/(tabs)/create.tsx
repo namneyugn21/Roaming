@@ -9,7 +9,7 @@ import theme from "../../constants/theme";
 import { User } from "@/constants/types";
 import { fetchCurrentUser } from "@/services/user";
 import { createPost } from "@/services/post";
-import LocationModal from "@/components/post/LocationModal";
+import LocationModal from "@/components/post/SearchLocationModal";
 
 const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
 

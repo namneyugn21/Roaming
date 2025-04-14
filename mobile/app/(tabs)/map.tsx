@@ -7,11 +7,15 @@ import { fetchUserPosts } from "@/services/post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchCurrentUser } from "@/services/user";
 import { useFocusEffect } from "expo-router";
+import { Post } from "@/constants/types";
+import PostPreviewModal from "@/components/post/PostPreviewModal";
 
 
 export default function MapScreen() {
   const [location, setLocation] = useState<{ lat: string; lng: string } | null>(null);
-  const [postLocations, setPostLocations] = useState<{ lat: string; lng: string }[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [postModalVisible, setPostModalVisible] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   {/* handle the location */ }
   // get current location
@@ -49,6 +53,22 @@ export default function MapScreen() {
     }
   }
 
+  {/* handle the post modal */ }
+  const handlePostModal = async (pid: string) => {
+    // get the current user id
+    const selectedPost = posts.find((post) => post.pid === pid);
+    if (!selectedPost) return;
+
+    setSelectedPost(selectedPost);
+    setPostModalVisible(true);
+  }
+
+  const handleClosePostModal = () => {
+    setPostModalVisible(false);
+    setSelectedPost(null);
+  }
+
+  {/* handle the map */ }
   useFocusEffect(
     React.useCallback(() => {
       getCurrentLocation();
@@ -62,13 +82,7 @@ export default function MapScreen() {
         const posts = await fetchUserPosts(user.uid);
         if (!posts) { console.log("Error getting user posts"); return; }
 
-        // iterate through the posts and get the locations
-        const locations = posts.map((post) => {
-          const lat = post.latitude ?? "";
-          const lng = post.longitude ?? "";
-          return { lat, lng };
-        });
-        setPostLocations(locations);
+        setPosts(posts);
       };
       fetchUserData();
     }, [])
@@ -84,7 +98,16 @@ export default function MapScreen() {
   
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <MapView latitude={location.lat} longitude={location.lng} postLocations={postLocations} />
+      <MapView latitude={location.lat} longitude={location.lng} posts={posts} postClicked={(pid: string) => handlePostModal(pid)} />
+      {postModalVisible && selectedPost && (
+        <PostPreviewModal
+          visible={postModalVisible}
+          location={selectedPost.location}
+          createdAt={selectedPost.createdAt}
+          images={selectedPost.image}
+          onClose={handleClosePostModal}
+        />
+      )}
     </View>
   );
 }

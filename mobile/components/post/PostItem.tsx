@@ -7,8 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { fetchCurrentUser } from '@/services/user';
 import Constants from 'expo-constants';
 
-const GEOAPIFY_API_KEY = Constants.expoConfig?.extra?.GEOAPIFY_API_KEY;
-
 // this is to ensure that the PostItem component receives the correct props
 interface PostItemProps {
   avatar: string;

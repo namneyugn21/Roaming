@@ -146,7 +146,7 @@ This starts the **Express server** on `http://localhost:3000`.
 <div align="center"> <img src="/mobile/assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/search-screen.png" alt="Create Post Screen" width="45%"/> </div>
 
 ### Map View
-<div align="center"> <img src="/mobile/assets/images/screenshots/map-screen.png" alt="Map Screen" width="45%"/> </div>
+<div align="space-between"> <img src="/mobile/assets/images/screenshots/map-screen.png" alt="Map Screen" width="30%"/> <img src="/mobile/assets/images/screenshots/map-marker.png" alt="Map Marker" width="30%"/> <img src="/mobile/assets/images/screenshots/image-preview.png" alt="Image Preview" width="30%"/> </div>
 
 
 * * * * *

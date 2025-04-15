@@ -107,13 +107,15 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 
 #### **Frontend (React Native)**
 
-`cd mobile
-npm install`
+```bash
+cd mobile npm install
+```
 
 #### **Backend (Node.js & Express)**
 
-`cd backend
-npm install`
+```bash
+cd backend npm install
+```
 
 * * * * *
 
@@ -121,13 +123,15 @@ npm install`
 
 #### **Frontend**
 
-`cd mobile
-npx expo start`
+```bash
+cd mobile npx expo start
+```
 
 #### **Backend**
 
-`cd backend
-node server.js`
+```bash
+cd backend node server.js
+```
 
 This starts the **Express server** on `http://localhost:3000`.
 
@@ -146,28 +150,7 @@ This starts the **Express server** on `http://localhost:3000`.
 <div align="center"> <img src="/mobile/assets/images/screenshots/create-screen.png" alt="Create Post Screen" width="45%"/> <img src="/mobile/assets/images/screenshots/search-screen.png" alt="Create Post Screen" width="45%"/> </div>
 
 ### Map View
-<div align="space-between"> <img src="/mobile/assets/images/screenshots/map-screen.png" alt="Map Screen" width="30%"/> <img src="/mobile/assets/images/screenshots/map-marker.png" alt="Map Marker" width="30%"/> <img src="/mobile/assets/images/screenshots/image-preview.png" alt="Image Preview" width="30%"/> </div>
-
-
-* * * * *
-
-**API Endpoints** (Backend)
----------------------------
-
-### **User Authentication**
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| POST | `/api/users/register` | Register a new user |
-| GET | `/api/users/me` | Get user profile |
-
-### **Post Management**
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| POST | `/api/posts` | Create a new post |
-| GET | `/api/posts` | Retrieve all posts |
-| GET | `/api/:userId/posts` | Retrieve all posts from a user |
+<div align="center"> <img src="/mobile/assets/images/screenshots/map-screen.png" alt="Map Screen" width="33%"/> <img src="/mobile/assets/images/screenshots/map-marker.png" alt="Map Marker" width="33%"/> <img src="/mobile/assets/images/screenshots/image-preview.png" alt="Image Preview" width="33%"/> </div>
 
 * * * * *
 

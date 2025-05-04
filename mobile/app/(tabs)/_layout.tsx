@@ -35,14 +35,15 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* Search */}
+      {/* Chatbot */}
       <Tabs.Screen
-        name="search"
+        name="chatbot"
         options={{
-          headerShown: false,
+          title: "AI Assistant",
+          headerTitleStyle: { color: theme.textColor, fontWeight: "bold" },          
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? "search" : "search-outline"}
+              name={focused ? "sparkles" : "sparkles-outline"}
               size={28}
               color={color}
             />

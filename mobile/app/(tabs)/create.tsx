@@ -61,6 +61,9 @@ export default function CreateScreen() {
   const [longitude, setLongitude] = React.useState<string | null>(null); // store the longitude
   const [location, setLocation] = React.useState<string | null>(null); // store the location
 
+  // AI modal state
+  const [toggleAI, setToggleAI] = React.useState<boolean>(false); // toggle the AI modal
+
   const handlePost = async () => {
     // retrieve user information 
     const user = await fetchCurrentUser();
@@ -271,9 +274,6 @@ export default function CreateScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleLocation} activeOpacity={0.9}>
                   <Ionicons name="location-outline" size={23} color={theme.primary}></Ionicons>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {}}>
-                  <Ionicons name="sparkles-outline" size={22} color={theme.primary}></Ionicons>
                 </TouchableOpacity>
               </View>
             </View>

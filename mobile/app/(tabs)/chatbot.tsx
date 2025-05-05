@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert, ScrollView } from "react-native";
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Alert, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import theme from "../../constants/theme";
+import { getAIResponse } from "@/services/chatbot";
+import * as Animatable from "react-native-animatable";
+import Markdown from "react-native-markdown-display";
+import { useFocusEffect } from "expo-router";
 
 export default function CreateScreen() {
   const [messages, setMessages] = React.useState([
@@ -18,13 +22,21 @@ export default function CreateScreen() {
     setInput("");
     setIsTyping(true);
   
-    // Simulate AI response (replace with Gemini or your backend)
-    setTimeout(() => {
-      const aiResponse = { role: "ai", text: "Here’s what I found! ✨" };
-      setMessages(prev => [...prev, aiResponse]);
+    const aiResponse = await getAIResponse(input);
+    if (aiResponse) {
+      const aiMessage = { role: "ai", text: String(aiResponse).trim() };
+      setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
-    }, 1500);
+    } else {
+      Alert.alert("Error", "Failed to get a response from the AI.");
+    }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setInput("");
+    }, [])
+  )
   
   return (
     <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: "flex-end" }}>
@@ -37,22 +49,50 @@ export default function CreateScreen() {
           contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          ref={(ref) => {
+          if (ref) {
+            ref.scrollToEnd({ animated: true });
+          }
+          }}
         >
           {/* AI Chatbot Section */}
-          <View style={{ marginTop: 30 }}>
+          <View style={{ marginTop: 10 }}>
             {messages.map((msg, index) => (
-              <View
+              <Animatable.View
                 key={index}
+                animation={"fadeIn"}
+                duration={400}
                 style={[
                   styles.messageBubble,
                   msg.role === "user" ? styles.userBubble : styles.aiBubble
                 ]}
               >
-                <Text style={styles.messageText}>{msg.text}</Text>
-              </View>
+                <Markdown style={{
+                  body: styles.messageText,
+                }}>{msg.text}</Markdown>
+              </Animatable.View>
             ))}
 
-            {isTyping && <Text style={{ fontStyle: "italic", color: theme.textColor, marginTop: 5, marginLeft: 20, fontSize: 15 }}>AI is typing...</Text>}
+            {isTyping && (
+              <Animatable.View
+                animation="fadeIn"
+                iterationCount="infinite"
+                direction="alternate"
+                style={[styles.messageBubble, styles.aiBubble]}
+              >
+                <Text
+                  style={{ 
+                    fontSize: 15, 
+                    color: theme.secondary, 
+                    fontStyle: "italic",
+                    paddingVertical: 10,
+                    paddingHorizontal: 5,
+                  }}
+                >
+                  I am thinking...
+                </Text>
+              </Animatable.View>
+            )}
           </View>
         </ScrollView>
         <View style={styles.inputContainer}>
@@ -67,7 +107,9 @@ export default function CreateScreen() {
             autoFocus={true}
           />
           <TouchableOpacity onPress={sendMessage}>
-            <Ionicons name="send" size={24} color={theme.secondary} />
+            <Animatable.View animation={"bounceIn"} duration={500}>
+              <Ionicons name="send" size={24} color={theme.secondary} />
+            </Animatable.View>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -79,39 +121,23 @@ const styles = StyleSheet.create({
   messageText: {
     color: theme.secondary,
     fontSize: 15,
-  },
-  postButton: {
-    backgroundColor: theme.accent,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 20,
-    alignItems: "center",
-  },
-  postButtonActive: {
-    backgroundColor: theme.secondary,
-  },
-  postButtonText: {
-    color: theme.background,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  previewImageContainer: {
-    flexDirection: "row",
-    height: 250,
-    marginTop: 10,
-  },
-  previewImage: {
-    width: 200,
-    height: 250,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: theme.accent,
+    lineHeight: 20,
   },
   messageBubble: {
-    padding: 10,
-    borderRadius: 12,
-    marginBottom: 8,
     maxWidth: "80%",
+    paddingVertical: 2,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    marginVertical: 10,
+    marginHorizontal: 15,
+    shadowColor: theme.primary,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   userBubble: {
     backgroundColor: theme.primary,

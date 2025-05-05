@@ -44,7 +44,8 @@ export default {
       "FIREBASE_APP_ID": process.env.FIREBASE_APP_ID,
       "CLOUDINARY_CLOUD_NAME": process.env.CLOUDINARY_CLOUD_NAME,
       "GEOAPIFY_API_KEY": process.env.GEOAPIFY_API_KEY,
-      "LOCAL_API_URL": process.env.LOCAL_API_URL
+      "LOCAL_API_URL": process.env.LOCAL_API_URL,
+      "GOOGLE_GENAI_API_KEY": process.env.GOOGLE_GENAI_API_KEY,
     }
   }
 }

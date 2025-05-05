@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet
+  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  ActivityIndicator
 } from "react-native";
 import theme from "@/constants/theme";
 import { signIn } from "@/services/auth";
@@ -15,17 +16,21 @@ export default function SignIn({ switchMode }: SignInProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async () => {
     setError("");
+    setIsLoading(true);
 
     if (!email || !password) {
       setError("Please fill in all fields.");
+      setIsLoading(false);
       return;
     }
 
     const result = await signIn({ email, password });
     if (!result.success && result.message) {
+      setIsLoading(false);
       setError(result.message); 
     }
   }
@@ -65,9 +70,16 @@ export default function SignIn({ switchMode }: SignInProps) {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={() => handleSignIn()}>
-        <Text style={styles.buttonText}>Sign In</Text>
-      </TouchableOpacity>
+      {/* loading indicator */}
+      {isLoading ? (
+        <View style={styles.button}>
+          <ActivityIndicator size="small" color={theme.textColor} />
+        </View>
+      ) : (
+        <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={() => handleSignIn()}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

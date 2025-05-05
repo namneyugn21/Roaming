@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert, ScrollView } from "react-native";
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList, Alert, ScrollView, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -16,7 +16,7 @@ const MAX_IMAGE_COUNT = 10; // the maximum number of images that can be uploaded
 export default function CreateScreen() {
   const router = useRouter();
   const captionInputRef = React.useRef<TextInput>(null); // reference to the caption input field
-
+  const [isLoading, setIsLoading] = React.useState(false); // loading state
   const [user, setUser] = React.useState<User | null>(null); // store the user
 
   // load the user when the screen is focused
@@ -61,14 +61,13 @@ export default function CreateScreen() {
   const [longitude, setLongitude] = React.useState<string | null>(null); // store the longitude
   const [location, setLocation] = React.useState<string | null>(null); // store the location
 
-  // AI modal state
-  const [toggleAI, setToggleAI] = React.useState<boolean>(false); // toggle the AI modal
-
   const handlePost = async () => {
+    setIsLoading(true); // set the loading state to true
     // retrieve user information 
     const user = await fetchCurrentUser();
     if (!user) {
       Alert.alert("User not found", "Please login to post!");
+      setIsLoading(false); // set the loading state to false
       return;
     }
 
@@ -87,6 +86,7 @@ export default function CreateScreen() {
       router.replace("/(tabs)/home"); // navigate to the Home screen
     } catch (error) {
       console.error("Failed to create post:", error);
+      setIsLoading(false); // set the loading state to false
       Alert.alert("Failed to create post", "Please try again later!");
     }
   };
@@ -201,6 +201,8 @@ export default function CreateScreen() {
         setLatitude(null);
         setLongitude(null);
         setLocation(null);
+        setToggleLocation(false);
+        setIsLoading(false);
       };
     }, [])
   );
@@ -296,6 +298,13 @@ export default function CreateScreen() {
         </View>
         <LocationModal visible={toggleLocation} onClose={() => setToggleLocation(false)} onLocationSelect={(latitude, longitude, location) => { setLatitude(latitude); setLongitude(longitude); setLocation(location) }} />
       </KeyboardAvoidingView>
+      {/* loading overlay */}
+      {isLoading && 
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={theme.accent} />
+          <Text style={styles.loadingText}>Posting your moment...</Text>
+        </View>
+      }
     </View>
   );
 }
@@ -379,5 +388,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: theme.accent,
-  }
+  },
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: theme.primary,
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });

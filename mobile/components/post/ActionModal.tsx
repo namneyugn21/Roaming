@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  TouchableOpacity, Animated, StyleSheet, PanResponder, TouchableWithoutFeedback, Text, Alert
+  TouchableOpacity, Animated, StyleSheet, PanResponder, TouchableWithoutFeedback, Text, Alert,
+  ActivityIndicator, View
 } from "react-native";
 import theme from "@/constants/theme";
 import { Post } from "@/constants/types";
@@ -17,6 +18,7 @@ export default function EditModal({ post, visible, onClose, onUpdate }: EditModa
   const translateY = useRef(new Animated.Value(800)).current; // start below the screen
   const overlayOpacity = useRef(new Animated.Value(0)).current; // start with no opacity
   const [isVisible, setIsVisible] = useState(visible);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -36,6 +38,7 @@ export default function EditModal({ post, visible, onClose, onUpdate }: EditModa
         useNativeDriver: true,
       }).start();
     } else {
+      setIsDeleting(false); // show loading indicator
       // smoothly animate modal down before hiding
       Animated.timing(translateY, {
         toValue: 800, // Move back down
@@ -82,10 +85,14 @@ export default function EditModal({ post, visible, onClose, onUpdate }: EditModa
 
   // handle delete post
   const handleDelete = () => {
+    setIsDeleting(true); // show loading indicator
     Alert.alert("Delete post", "Are you sure you want to delete this post?", [
       {
         text: "Cancel",
         style: "cancel",
+        onPress: () => {
+          setIsDeleting(false); // show loading indicator
+        },
       },
       {
         text: "Delete",
@@ -94,6 +101,7 @@ export default function EditModal({ post, visible, onClose, onUpdate }: EditModa
           // delete post
           const response = await deletePost(post);
           if (response === 200) onUpdate(); // refresh the post
+          setIsDeleting(false); // show loading indicator
           onClose();
         },
       },
@@ -107,9 +115,19 @@ export default function EditModal({ post, visible, onClose, onUpdate }: EditModa
           style={[styles.formContainer, { transform: [{ translateY }] }]}
           {...panResponder.panHandlers}
         >
-          <TouchableOpacity activeOpacity={0.9} style={styles.button} onPress={() => handleDelete()}>
-            <Text style={styles.buttonText}>Delete post</Text> 
-          </TouchableOpacity>
+          {isDeleting ? (
+            <View style={styles.button}>
+              <ActivityIndicator
+                size="small"
+                color={theme.accent}
+              />
+            </View>
+          ) :
+          (
+            <TouchableOpacity activeOpacity={0.9} style={styles.button} onPress={() => handleDelete()}>
+              <Text style={styles.buttonText}>Delete post</Text> 
+            </TouchableOpacity>
+          )}
         </Animated.View>
       </Animated.View>
     </TouchableWithoutFeedback>

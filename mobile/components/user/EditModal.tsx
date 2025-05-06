@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View, TouchableOpacity, Animated, StyleSheet, PanResponder, TouchableWithoutFeedback, Text, TextInput, Image, ScrollView, KeyboardAvoidingView, Platform,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import theme from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,6 +29,8 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
   const [name, setName] = useState(user.name);
   const [avatar, setAvatar] = useState(user.avatar);
   const [bio, setBio] = useState(user.bio);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -56,6 +59,7 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
         useNativeDriver: true,
       }).start();
     } else {
+      setIsLoading(false); // show loading indicator
       // smoothly animate modal down before hiding
       Animated.timing(translateY, {
         toValue: 800, // Move back down
@@ -102,6 +106,7 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
 
   // handle form submission
   const handleSave = async () => {
+    setIsLoading(true); // show loading indicator
     // check if the current user pfp is hosted on Cloudinary
     const public_id = typeof user.avatar === "string" ? null : user.avatar.public_id; // null if not Cloudinary, otherwise we will pass the public_id for deletion
 
@@ -120,8 +125,10 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
       try {
         AsyncStorage.setItem("user", JSON.stringify(updatedUser)); // update the cached user
         onUpdate(updatedUser); // update the user in the parent component
+        setIsLoading(false); // hide loading indicator
         onClose(); // close the modal
       } catch (error) {
+        setIsLoading(false); // hide loading indicator
         console.error("Error updating AsyncStorage:", error);
       }
     }
@@ -219,14 +226,21 @@ export default function EditModal({ visible, onClose, user, onUpdate }: EditModa
                     setIsEditing(user.bio !== text);
                   }}
                 />
-                <TouchableOpacity 
-                  activeOpacity={0.9}
-                  style={{ backgroundColor: theme.accent, padding: 15, borderRadius: 10, opacity: isEditing ? 1 : 0.5 }} 
-                  onPress={() => handleSave() }
-                  disabled={!isEditing}
-                >
-                  <Text style={{ color: theme.textColor, textAlign: "center", fontWeight: "bold" }}>Save changes</Text>
-                </TouchableOpacity>
+                {isLoading ? (
+                  <View style={{ backgroundColor: theme.accent, padding: 14, borderRadius: 10, opacity: 0.5 }}>
+                    <ActivityIndicator size="small" color={theme.textColor} />
+                  </View>
+                )
+                : (
+                  <TouchableOpacity 
+                    activeOpacity={0.9}
+                    style={{ backgroundColor: theme.accent, padding: 15, borderRadius: 10, opacity: isEditing ? 1 : 0.5 }} 
+                    onPress={() => handleSave() }
+                    disabled={!isEditing}
+                  >
+                    <Text style={{ color: theme.textColor, textAlign: "center", fontWeight: "bold" }}>Save changes</Text>
+                  </TouchableOpacity>
+                )}
               </ScrollView>
             </KeyboardAvoidingView>
           </View>

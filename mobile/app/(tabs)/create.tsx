@@ -287,24 +287,25 @@ export default function CreateScreen() {
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <Text style={styles.messageText}>Share at least one image!</Text>
           </View>
-          <TouchableOpacity
-            style={[styles.postButton, (image != null) ? styles.postButtonActive : {}]}
-            onPress={handlePost}
-            activeOpacity={0.9}
-            disabled={image == null}
-          >
-            <Text style={styles.postButtonText}>Post</Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <View
+              style={styles.postButton}
+            >
+              <ActivityIndicator size="small" color={theme.background} />
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={[styles.postButton, (image != null) ? styles.postButtonActive : {}]}
+              onPress={handlePost}
+              activeOpacity={0.9}
+              disabled={image == null}
+            >
+              <Text style={styles.postButtonText}>Post</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <LocationModal visible={toggleLocation} onClose={() => setToggleLocation(false)} onLocationSelect={(latitude, longitude, location) => { setLatitude(latitude); setLongitude(longitude); setLocation(location) }} />
       </KeyboardAvoidingView>
-      {/* loading overlay */}
-      {isLoading && 
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={theme.accent} />
-          <Text style={styles.loadingText}>Posting your moment...</Text>
-        </View>
-      }
     </View>
   );
 }
@@ -388,22 +389,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: theme.accent,
-  },
-  loadingOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height: "100%",
-    width: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999,
-  },
-  loadingText: {
-    marginTop: 10,
-    color: theme.primary,
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

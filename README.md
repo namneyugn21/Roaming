@@ -10,13 +10,8 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 ### Table of Contents
 
 - [Technologies Used](#technologies-used)
-- [Current Features](#current-features)
-  - [Frontend Features](#frontend-features)
-  - [Backend Features](#backend-features)
-- [Planned Future Enhancements](#planned-future-enhancements)
 - [Setting Up the Project](#setting-up-the-project)
 - [Screenshots](#screenshots)
-- [API Endpoints (Backend)](#api-endpoints-backend)
 - [License](#license)
 - [Contact](#contact)
 
@@ -31,6 +26,7 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 -   **Expo** - A framework and platform built on top of React Native that simplifies development by providing pre-configured tools, libraries, and a managed workflow.
 -   **Firebase** - Provides authentication for user sign-in and Firestore Database for real-time data storage and syncing.
 -   **MapLibre**- Provides an interactive map view that pinpoint the user location and their geotagged posts.
+-   **Google Gemini**- An AI model that interacts with users through a chatbot, enhancing content personalization and engagement.
 
 ### **Backend**
 
@@ -40,102 +36,36 @@ With **no likes, no follower counts, and no pressure**, Roaming is an invitation
 
 * * * * *
 
-**Current Features**
---------------------
-
-### **Frontend Features**
-
-#### **Welcome Screen**
-
--   Displays the app logo and name
--   Includes a **"Get Started"** button that navigates to the home screen
-
-#### **Authorization Screen**
-
--   Users can **sign up or log in** with their **email and password** via Firebase Authentication.
-
-#### **Home Screen**
-
--   Displays a **main feed** with user-generated content.
--   Implemented with **FlatList** for scalable and efficient content loading.
-
-#### **Create a Post**
-
--   Allows users to select up to **10 images** to upload.
--   Users can add a **post description** and **their current location**.
--   Supports **capturing images** via the device camera.
--   Users **grant permissions** for location, camera, and photo library access via the Expo API.
-
-#### **Delete a Post**
-
--   Allows users to delete their posts.
--   The deletion will delete the post entry on Firebase, as well as delete the photo(s) saved on Cloudinary.
-
-#### **Edit User Profile**
-
--   Users can update their username, display name, bio, and avatar.
--   Any changes to the profile will automatically reflect on their posts (if applicable).
--   When updating the avatar, the system will efficiently manage storage by deleting the old avatar from Cloudinary, ensuring optimal space usage.
-
-#### **Map View**
--  Allows user to interact with the map and see their geotagged posts pinpoint.
-
-* * * * *
-
-### **Backend Features**
-
--   **User Management API** - Handles **user authentication, registration, and profile updates**.
--   **Post Upload API** - Manages **photo uploads, deletions, captions, and geolocation**.
--   **Cloudinary Integration** - Stores and serves **optimized media files** via a fast CDN.
--   **Basic REST API** - Built with **Node.js & Express**, enabling CRUD operations for user posts.
--   **Data Validation & Security** - Implements **middleware** for data validation and authentication.
-
-* * * * *
-
-**Planned Future Enhancements**
--------------------------------
-
--   **AI Integration** -- Integrate Gemini AI for AI generated caption and chatbot.
--   **Multi-language Support** -- Expand accessibility for a global audience.
-
-* * * * *
-
 **Setting Up the Project**
 --------------------------
 
-### **1️⃣ Install Dependencies**
-
-#### **Frontend (React Native)**
-
+### Backend (Node.js & Express)
+- In the backend directory, copy the `.env.example` file to `.env`.
+- Replace the placeholder values in `.env` with your own API keys and credentials:
 ```bash
-cd mobile npm install
+cp .env.example .env
 ```
 
-#### **Backend (Node.js & Express)**
-
+### Frontend (React Native)
+- In the mobile directory, copy the `.env.example` file to `.env`.
+- Replace the placeholder values in `.env` with your own API keys and credentials:
 ```bash
-cd backend npm install
+cp .env.example .env
 ```
 
-* * * * *
-
-### **2️⃣ Start the Development Server**
-
-#### **Frontend**
-
+### Start the Development Server
+#### Frontend
 ```bash
-cd mobile npx expo start
+cd mobile
+npx expo start
 ```
-
-#### **Backend**
-
+#### Backend
 ```bash
-cd backend node server.js
+cd backend
+node server.js
 ```
+This starts the Express server on http://localhost:3000.
 
-This starts the **Express server** on `http://localhost:3000`.
-
-* * * * *
 
 **Screenshots**
 ---------------
